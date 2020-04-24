@@ -1,3 +1,7 @@
 # API Documentation
 
 http://api.irishrail.ie/realtime/
+
+# Goal
+
+'Every day I travel between Arklow and Shankill. Using this API write a small app that would be useful to me'
