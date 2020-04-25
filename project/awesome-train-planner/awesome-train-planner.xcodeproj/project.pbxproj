@@ -35,7 +35,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		8851BF6D24546EB20091C925 /* awesome-train-planner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "awesome-train-planner.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8851BF6D24546EB20091C925 /* Train Planner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Train Planner.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8851BF7024546EB20091C925 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8851BF7224546EB20091C925 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		8851BF7424546EB20091C925 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
@@ -89,7 +89,7 @@
 		8851BF6E24546EB20091C925 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8851BF6D24546EB20091C925 /* awesome-train-planner.app */,
+				8851BF6D24546EB20091C925 /* Train Planner.app */,
 				8851BF8324546EB30091C925 /* awesome-train-plannerTests.xctest */,
 				8851BF8E24546EB30091C925 /* awesome-train-plannerUITests.xctest */,
 			);
@@ -177,7 +177,7 @@
 			);
 			name = "awesome-train-planner";
 			productName = "awesome-train-planner";
-			productReference = 8851BF6D24546EB20091C925 /* awesome-train-planner.app */;
+			productReference = 8851BF6D24546EB20091C925 /* Train Planner.app */;
 			productType = "com.apple.product-type.application";
 		};
 		8851BF8224546EB30091C925 /* awesome-train-plannerTests */ = {
@@ -473,7 +473,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "amiorkov.awesome-train-planner";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Train Planner";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -490,7 +490,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "amiorkov.awesome-train-planner";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Train Planner";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
