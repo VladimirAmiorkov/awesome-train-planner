@@ -11,11 +11,19 @@ import Combine
 
 class MainViewController: UIViewController {
 
+    @IBOutlet weak var statusLabel: UILabel!
+    @IBOutlet weak var fromTextField: UITextField!
+    @IBOutlet weak var toTextField: UITextField!
+
+    @IBOutlet weak var resultsList: UICollectionView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
     }
 
-
+    @IBAction func searchTap(_ sender: UIButton) {
+        
+    }
 }
 

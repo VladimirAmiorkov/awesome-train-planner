@@ -100,7 +100,6 @@
 			isa = PBXGroup;
 			children = (
 				8851BFA2245475370091C925 /* Models */,
-				8851BFA02454752B0091C925 /* ViewControllers */,
 				8851BFA32454755E0091C925 /* ViewModels */,
 				8851BFA1245475320091C925 /* Views */,
 				8851BF7024546EB20091C925 /* AppDelegate.swift */,
@@ -156,6 +155,7 @@
 		8851BFA32454755E0091C925 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				8851BFA02454752B0091C925 /* ViewControllers */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
