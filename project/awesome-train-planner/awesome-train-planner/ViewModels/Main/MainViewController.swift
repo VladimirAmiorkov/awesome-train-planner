@@ -18,6 +18,8 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     
     private var statusSubscriber: AnyCancellable?
     private var listSubscriber: AnyCancellable?
+    private var fromSubscriber: AnyCancellable?
+    private var toSubscriber: AnyCancellable?
     
     let viewModel: MainViewModel
     let dataService: RailwayDataService
@@ -30,26 +32,44 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        dataService.getAllStationsData() { stations in
-            self.viewModel.stations = stations
-            self.viewModel.status = .loaded
+        // TODO: get real data for "directions"
+//        dataService.getAllStationsData() { stations in
+//            self.viewModel.stations = stations
+//            self.viewModel.status = .loaded
+//            self.updateStatusWith(status: .loaded)
+//        }
+        
+//        dataService.getAllStationsData(withType: IrishRailAPI.StationType.mainline) { stations in
+//            self.viewModel.stations = stations
+//            self.updateStatusWith(status: .loaded)
+//        }
+        
+        dataService.getStationData(withName: "Cobh") { data in
+            self.updateStatusWith(status: .loaded)
         }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupBidnings()
-        
     }
 
     @IBAction func searchTap(_ sender: UIButton) {
         
     }
     
+    private func updateStatusWith(status: LoadingStatus) {
+        self.viewModel.status = status
+    }
+    
     private func setupBidnings() {
         statusSubscriber = viewModel.$status.receive(on: DispatchQueue.main).map { (status: LoadingStatus) -> String? in
             return status == LoadingStatus.loaded ? "Loaded" : "Loading"
         }.assign(to: \.text, on: statusLabel)
+        
+        fromSubscriber = viewModel.$from.receive(on: DispatchQueue.main).assign(to: \.text, on: fromTextField)
+        
+        toSubscriber = viewModel.$to.receive(on: DispatchQueue.main).assign(to: \.text, on: toTextField)
         
         listSubscriber = viewModel.$stations.receive(on: DispatchQueue.main).sink { receivedValue in
             self.resultsList.reloadData()
@@ -67,6 +87,7 @@ extension MainViewController {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "trainCard", for: indexPath)
         cell.contentView.backgroundColor = .red
+        
         return cell
     }
     

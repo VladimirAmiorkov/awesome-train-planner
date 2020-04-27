@@ -17,9 +17,11 @@ protocol MainViewModelProtocol {
 
 class MainViewModel: MainViewModelProtocol {
     @Published var status: LoadingStatus
-    var from: String?
-    var to: String?
-    var directions: [Direction]
+    @Published var from: String?
+    @Published var to: String?
+    @Published var directions: [Direction]
+    
+    // TODO: move this to its own view controller
     @Published var stations: [Station]
     
     init() {

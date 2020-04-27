@@ -9,6 +9,7 @@
 import Foundation
 
 struct Station: Codable {
+    
     let StationDesc: String
     let StationAlias: String
     let StationLatitude: String
