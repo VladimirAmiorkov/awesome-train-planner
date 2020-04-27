@@ -11,7 +11,7 @@
 		881FD0C62455AF9A00C9E3E5 /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881FD0C52455AF9A00C9E3E5 /* Direction.swift */; };
 		881FD0C82455AFCD00C9E3E5 /* Station.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881FD0C72455AFCD00C9E3E5 /* Station.swift */; };
 		881FD0CA2455B02700C9E3E5 /* LoadingStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881FD0C92455B02700C9E3E5 /* LoadingStatus.swift */; };
-		881FD0CE2455B20D00C9E3E5 /* TrainDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881FD0CD2455B20D00C9E3E5 /* TrainDataService.swift */; };
+		881FD0CE2455B20D00C9E3E5 /* RailwayDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881FD0CD2455B20D00C9E3E5 /* RailwayDataService.swift */; };
 		881FD0D12455CAE400C9E3E5 /* IrishRailAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881FD0D02455CAE400C9E3E5 /* IrishRailAPI.swift */; };
 		8851BF7124546EB20091C925 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8851BF7024546EB20091C925 /* AppDelegate.swift */; };
 		8851BF7324546EB20091C925 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8851BF7224546EB20091C925 /* SceneDelegate.swift */; };
@@ -21,6 +21,7 @@
 		8851BF7D24546EB30091C925 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8851BF7B24546EB30091C925 /* LaunchScreen.storyboard */; };
 		8851BF8824546EB30091C925 /* awesome_train_plannerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8851BF8724546EB30091C925 /* awesome_train_plannerTests.swift */; };
 		8851BF9324546EB30091C925 /* awesome_train_plannerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8851BF9224546EB30091C925 /* awesome_train_plannerUITests.swift */; };
+		885CB92324570A8E0077C67C /* RailwaysDataXMLParserDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 885CB92224570A8E0077C67C /* RailwaysDataXMLParserDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,7 +46,7 @@
 		881FD0C52455AF9A00C9E3E5 /* Direction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Direction.swift; sourceTree = "<group>"; };
 		881FD0C72455AFCD00C9E3E5 /* Station.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Station.swift; sourceTree = "<group>"; };
 		881FD0C92455B02700C9E3E5 /* LoadingStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingStatus.swift; sourceTree = "<group>"; };
-		881FD0CD2455B20D00C9E3E5 /* TrainDataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainDataService.swift; sourceTree = "<group>"; };
+		881FD0CD2455B20D00C9E3E5 /* RailwayDataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RailwayDataService.swift; sourceTree = "<group>"; };
 		881FD0D02455CAE400C9E3E5 /* IrishRailAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IrishRailAPI.swift; sourceTree = "<group>"; };
 		8851BF6D24546EB20091C925 /* Train Planner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Train Planner.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8851BF7024546EB20091C925 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -61,6 +62,7 @@
 		8851BF8E24546EB30091C925 /* awesome-train-plannerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "awesome-train-plannerUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8851BF9224546EB30091C925 /* awesome_train_plannerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = awesome_train_plannerUITests.swift; sourceTree = "<group>"; };
 		8851BF9424546EB40091C925 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		885CB92224570A8E0077C67C /* RailwaysDataXMLParserDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RailwaysDataXMLParserDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,7 +101,7 @@
 		881FD0CC2455B1EF00C9E3E5 /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				881FD0CD2455B20D00C9E3E5 /* TrainDataService.swift */,
+				881FD0CD2455B20D00C9E3E5 /* RailwayDataService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -145,6 +147,7 @@
 		8851BF6F24546EB20091C925 /* awesome-train-planner */ = {
 			isa = PBXGroup;
 			children = (
+				885CB92024570A480077C67C /* Helpers */,
 				8851BFA2245475370091C925 /* Models */,
 				8851BFA32454755E0091C925 /* ViewModels */,
 				8851BFA1245475320091C925 /* Views */,
@@ -208,6 +211,22 @@
 				8851BFA02454752B0091C925 /* Main */,
 			);
 			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		885CB92024570A480077C67C /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				885CB92124570A4E0077C67C /* XML */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		885CB92124570A4E0077C67C /* XML */ = {
+			isa = PBXGroup;
+			children = (
+				885CB92224570A8E0077C67C /* RailwaysDataXMLParserDelegate.swift */,
+			);
+			path = XML;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -342,8 +361,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				8851BF7524546EB20091C925 /* MainViewController.swift in Sources */,
+				885CB92324570A8E0077C67C /* RailwaysDataXMLParserDelegate.swift in Sources */,
 				8851BF7124546EB20091C925 /* AppDelegate.swift in Sources */,
-				881FD0CE2455B20D00C9E3E5 /* TrainDataService.swift in Sources */,
+				881FD0CE2455B20D00C9E3E5 /* RailwayDataService.swift in Sources */,
 				8851BF7324546EB20091C925 /* SceneDelegate.swift in Sources */,
 				881FD0C62455AF9A00C9E3E5 /* Direction.swift in Sources */,
 				881FD0C82455AFCD00C9E3E5 /* Station.swift in Sources */,

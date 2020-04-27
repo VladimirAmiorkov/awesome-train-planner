@@ -20,11 +20,13 @@ class MainViewModel: MainViewModelProtocol {
     var from: String?
     var to: String?
     var directions: [Direction]
+    @Published var stations: [Station]
     
     init() {
         self.status = .loading
         self.from = "Arklow"
         self.to = "Shankill"
         self.directions = []
+        self.stations = []
     }
 }

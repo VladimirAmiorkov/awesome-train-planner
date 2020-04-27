@@ -161,7 +161,7 @@ struct IrishRailAPI {
 extension IrishRailAPI {
     
     private static let baseURL: String = "https://api.irishrail.ie/realtime/realtime.asmx/"
-    private static let scheme = "https"
+    private static let scheme = "http"
     private static let host = "api.irishrail.ie"
     private static let path = "/realtime/realtime.asmx"
 }
@@ -183,4 +183,3 @@ extension IrishRailAPI {
         case dart = "D"
     }
 }
-

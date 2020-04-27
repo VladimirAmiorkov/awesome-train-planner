@@ -8,6 +8,11 @@
 
 import Foundation
 
-struct Station {
-    let name: String
+struct Station: Codable {
+    let StationDesc: String
+    let StationAlias: String
+    let StationLatitude: String
+    let StationLongitude: String
+    let StationCode: String
+    let StationId: String
 }

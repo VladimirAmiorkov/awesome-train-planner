@@ -17,24 +17,43 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     @IBOutlet weak var resultsList: UICollectionView!
     
     private var statusSubscriber: AnyCancellable?
+    private var listSubscriber: AnyCancellable?
     
     let viewModel: MainViewModel
-
+    let dataService: RailwayDataService
+    
     required init?(coder: NSCoder) {
         self.viewModel = MainViewModel()
+        self.dataService = RailwayDataService()
         
         super.init(coder: coder)
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        // trigger API call
+        dataService.getAllStationsData() { stations in
+            self.viewModel.stations = stations
+            self.viewModel.status = .loaded
+        }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupBidnings()
+        
     }
 
     @IBAction func searchTap(_ sender: UIButton) {
+        
+    }
+    
+    private func setupBidnings() {
+        statusSubscriber = viewModel.$status.receive(on: DispatchQueue.main).map { (status: LoadingStatus) -> String? in
+            return status == LoadingStatus.loaded ? "Loaded" : "Loading"
+        }.assign(to: \.text, on: statusLabel)
+        
+        listSubscriber = viewModel.$stations.receive(on: DispatchQueue.main).sink { receivedValue in
+            self.resultsList.reloadData()
+        }
     }
 }
 
@@ -42,12 +61,12 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
 extension MainViewController {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        0
+        viewModel.stations.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "trainCard", for: indexPath)
-        
+        cell.contentView.backgroundColor = .red
         return cell
     }
     
