@@ -40,7 +40,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
 //
 //            self.updateStatusWith(status: .loaded)
 //        }
-//        
+//
 //        dataService.getAllStationsData(withType: IrishRailAPI.StationType.mainline) { data in
 //            if let stations = data.data {
 //                self.viewModel.stations = stations
@@ -57,7 +57,34 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
 //            self.updateStatusWith(status: .loaded)
 //        }
         
-        dataService.getStationData(withStaticString: "br") { data in
+//        dataService.getStationData(withStaticString: "br") { data in
+//            switch data.status {
+//            case .failure:
+//                self.updateStatusWith(status: .error)
+//            case .successs:
+//                self.updateStatusWith(status: .loaded)
+//            }
+//        }
+        
+//        dataService.getCurrentTrains() { data in
+//            switch data.status {
+//            case .failure:
+//                self.updateStatusWith(status: .error)
+//            case .successs:
+//                self.updateStatusWith(status: .loaded)
+//            }
+//        }
+        
+//        dataService.getCurrentTrains(withType: IrishRailAPI.TrainType.dart) { data in
+//            switch data.status {
+//            case .failure:
+//                self.updateStatusWith(status: .error)
+//            case .successs:
+//                self.updateStatusWith(status: .loaded)
+//            }
+//        }
+        
+        dataService.getTrainMovements(byId: "E976", andDate: "26 apr 20") { data in
             switch data.status {
             case .failure:
                 self.updateStatusWith(status: .error)

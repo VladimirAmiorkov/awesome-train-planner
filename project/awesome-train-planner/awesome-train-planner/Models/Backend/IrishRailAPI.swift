@@ -136,7 +136,7 @@ struct IrishRailAPI {
     
     func getCurrentTrains(withType type: TrainType) -> URL? {
         var components = getBaseURLComponenets()
-        components.path += getCurrentTrainsPath
+        components.path += getCurrentTrainsWithTypePath
         components.queryItems = [
             URLQueryItem(name: trainTypeParam, value: type.rawValue)
         ]

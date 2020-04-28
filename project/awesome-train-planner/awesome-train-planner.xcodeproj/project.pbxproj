@@ -25,6 +25,8 @@
 		885CB925245722C30077C67C /* StationData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 885CB924245722C30077C67C /* StationData.swift */; };
 		885CB92824580D820077C67C /* RailwaysResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 885CB92724580D820077C67C /* RailwaysResponse.swift */; };
 		885CB92A245819FE0077C67C /* StationFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 885CB929245819FE0077C67C /* StationFilter.swift */; };
+		885CB92C245824080077C67C /* TrainPosition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 885CB92B245824080077C67C /* TrainPosition.swift */; };
+		885CB92E245829000077C67C /* TrainMovement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 885CB92D245829000077C67C /* TrainMovement.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,6 +71,8 @@
 		885CB924245722C30077C67C /* StationData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationData.swift; sourceTree = "<group>"; };
 		885CB92724580D820077C67C /* RailwaysResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RailwaysResponse.swift; sourceTree = "<group>"; };
 		885CB929245819FE0077C67C /* StationFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationFilter.swift; sourceTree = "<group>"; };
+		885CB92B245824080077C67C /* TrainPosition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainPosition.swift; sourceTree = "<group>"; };
+		885CB92D245829000077C67C /* TrainMovement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainMovement.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -129,6 +133,8 @@
 				881FD0C92455B02700C9E3E5 /* LoadingStatus.swift */,
 				885CB924245722C30077C67C /* StationData.swift */,
 				885CB929245819FE0077C67C /* StationFilter.swift */,
+				885CB92B245824080077C67C /* TrainPosition.swift */,
+				885CB92D245829000077C67C /* TrainMovement.swift */,
 			);
 			path = Main;
 			sourceTree = "<group>";
@@ -376,11 +382,13 @@
 				881FD0CE2455B20D00C9E3E5 /* RailwayDataService.swift in Sources */,
 				8851BF7324546EB20091C925 /* SceneDelegate.swift in Sources */,
 				885CB925245722C30077C67C /* StationData.swift in Sources */,
+				885CB92C245824080077C67C /* TrainPosition.swift in Sources */,
 				881FD0C62455AF9A00C9E3E5 /* Direction.swift in Sources */,
 				881FD0C82455AFCD00C9E3E5 /* Station.swift in Sources */,
 				885CB92824580D820077C67C /* RailwaysResponse.swift in Sources */,
 				881FD0D12455CAE400C9E3E5 /* IrishRailAPI.swift in Sources */,
 				881FD0C42455ADBB00C9E3E5 /* MainViewModel.swift in Sources */,
+				885CB92E245829000077C67C /* TrainMovement.swift in Sources */,
 				881FD0CA2455B02700C9E3E5 /* LoadingStatus.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

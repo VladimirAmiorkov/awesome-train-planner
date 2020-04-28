@@ -15,16 +15,22 @@ protocol DataService {
     func getStationData(withName name: String, _ completion: @escaping (RailwaysResponse<StationData>) -> Void)
     func getStationData(withCode code: String, _ completion: @escaping (RailwaysResponse<StationData>) -> Void)
     func getStationData(withStaticString query: String, _ completion: @escaping (RailwaysResponse<[StationFilter]>) -> Void)
+    
+    func getCurrentTrains(_ completion: @escaping (RailwaysResponse<[TrainPosition]>) -> Void) -> Void
+    func getCurrentTrains(withType type: IrishRailAPI.TrainType, _ completion: @escaping (RailwaysResponse<[TrainPosition]>) -> Void) -> Void
+    func getTrainMovements(byId id: String, andDate date: String, _ completion: @escaping (RailwaysResponse<[TrainMovement]>) -> Void) -> Void
 }
 
 class RailwayDataService: NSObject, DataService, XMLParserDelegate {
-    
     
     private let api: IrishRailAPI = IrishRailAPI()
     private var cancellable: AnyCancellable?
     private let stationsParserDelegate = RailwaysDataXMLParserDelegate(rootKey: "objStation", dictionaryKeys: ["StationDesc", "StationAlias", "StationLatitude", "StationLongitude", "StationCode", "StationId"])
     private let stationDataParserDelegate = RailwaysDataXMLParserDelegate(rootKey: "objStationData", dictionaryKeys: ["Servertime", "Traincode", "Stationfullname", "Stationcode", "Querytime", "Traindate", "Origin", "Destination", "Origintime", "Destinationtime", "Status", "Lastlocation", "Duein", "Late", "Exparrival", "Expdepart", "Scharrival", "Schdepart", "Direction", "Traintype", "Locationtype"])
     private let stationDataParserForFilteredDataDelegate = RailwaysDataXMLParserDelegate(rootKey: "objStationFilter", dictionaryKeys: ["StationDesc_sp", "StationDesc", "StationCode"])
+    
+    private let trainsParserDelegate = RailwaysDataXMLParserDelegate(rootKey: "objTrainPositions", dictionaryKeys: ["TrainStatus", "TrainLatitude", "TrainLongitude", "TrainCode", "TrainDate", "PublicMessage", "Direction"])
+    private let trainMovementsParserDelegate = RailwaysDataXMLParserDelegate(rootKey: "objTrainMovements", dictionaryKeys: ["TrainCode", "TrainDate", "LocationCode", "LocationFullName", "LocationOrder", "LocationType", "TrainOrigin", "TrainDestination", "ScheduledArrival", "ScheduledDeparture", "ExpectedArrival", "ExpectedDeparture", "Arrival", "Departure", "AutoArrival", "AutoDepart", "StopType"])
     
     // MARK: Stations data
     
@@ -43,25 +49,44 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
     func getStationData(withName name: String, _ completion: @escaping (RailwaysResponse<StationData>) -> Void) {
         guard let url = api.getStationData(withName: name) else { return }
         
-        getStationDataWith(url: url, andParserDelegate: self.stationDataParserDelegate, completion: completion)
+        getDataObjectWith(url: url, andParserDelegate: self.stationDataParserDelegate, completion: completion)
     }
     
     func getStationData(withCode code: String, _ completion: @escaping (RailwaysResponse<StationData>) -> Void) {
         guard let url = api.getStationData(withCode: code) else { return }
         
-        getStationDataWith(url: url, andParserDelegate: self.stationDataParserDelegate, completion: completion)
+        getDataObjectWith(url: url, andParserDelegate: self.stationDataParserDelegate, completion: completion)
     }
     
     func getStationData(withStaticString query: String, _ completion: @escaping (RailwaysResponse<[StationFilter]>) -> Void) {
         guard let url = api.getStationData(withStaticString: query) else { return }
         
-        getStationDataWith(url: url, andParserDelegate: self.stationDataParserForFilteredDataDelegate, completion: completion)
+        getDataArrayWith(url: url, andParserDelegate: self.stationDataParserForFilteredDataDelegate, completion: completion)
     }
     
     // MARK: Trains data
     
+    func getCurrentTrains(_ completion: @escaping (RailwaysResponse<[TrainPosition]>) -> Void) {
+        guard let url = api.getCurrentTrains() else { return }
+        
+        getDataArrayWith(url: url, andParserDelegate: trainsParserDelegate, completion: completion)
+    }
+    
+    func getCurrentTrains(withType type: IrishRailAPI.TrainType, _ completion: @escaping (RailwaysResponse<[TrainPosition]>) -> Void) {
+        guard let url = api.getCurrentTrains(withType: type) else { return }
+        
+        getDataArrayWith(url: url, andParserDelegate: trainsParserDelegate, completion: completion)
+    }
+    
+    func getTrainMovements(byId id: String, andDate date: String, _ completion: @escaping (RailwaysResponse<[TrainMovement]>) -> Void) {
+        guard let url = api.getTrainMovements(byId: id, andDate: date) else { return }
+        
+        getDataArrayWith(url: url, andParserDelegate: trainMovementsParserDelegate, completion: completion)
+    }
+    
     // MARK: Helper functions
     
+    // TODO: rmeove
     private func getStationsWith(url: URL, completion: @escaping (RailwaysResponse<[Station]>) -> Void) {
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
             let response = RailwaysResponse<[Station]>(data: nil)
@@ -98,7 +123,7 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
         task.resume()
     }
  
-    private func getStationDataWith<T: Codable>(url: URL, andParserDelegate parserDelegate: RailwaysDataXMLParserDelegate , completion: @escaping (RailwaysResponse<T>) -> Void) {
+    private func getDataObjectWith<T: Codable>(url: URL, andParserDelegate parserDelegate: RailwaysDataXMLParserDelegate , completion: @escaping (RailwaysResponse<T>) -> Void) {
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
             let response = RailwaysResponse<T>(data: nil)
             
@@ -132,7 +157,7 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
         task.resume()
     }
     
-    private func getStationDataWith<T: Codable>(url: URL, andParserDelegate parserDelegate: RailwaysDataXMLParserDelegate , completion: @escaping (RailwaysResponse<[T]>) -> Void) {
+    private func getDataArrayWith<T: Codable>(url: URL, andParserDelegate parserDelegate: RailwaysDataXMLParserDelegate , completion: @escaping (RailwaysResponse<[T]>) -> Void) {
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
             let response = RailwaysResponse<[T]>(data: nil)
             
