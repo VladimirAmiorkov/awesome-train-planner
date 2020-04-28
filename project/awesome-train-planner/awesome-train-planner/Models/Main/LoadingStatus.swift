@@ -11,4 +11,5 @@ import Foundation
 enum LoadingStatus {
     case loaded
     case loading
+    case error
 }

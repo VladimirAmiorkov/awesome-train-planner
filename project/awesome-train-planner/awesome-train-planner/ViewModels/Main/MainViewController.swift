@@ -33,19 +33,37 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     
     override func viewWillAppear(_ animated: Bool) {
         // TODO: get real data for "directions"
-//        dataService.getAllStationsData() { stations in
-//            self.viewModel.stations = stations
-//            self.viewModel.status = .loaded
+//        dataService.getAllStationsData() { data in
+//            if let stations = data.data {
+//                self.viewModel.stations = stations
+//            }
+//
+//            self.updateStatusWith(status: .loaded)
+//        }
+//        
+//        dataService.getAllStationsData(withType: IrishRailAPI.StationType.mainline) { data in
+//            if let stations = data.data {
+//                self.viewModel.stations = stations
+//            }
+//
+//            self.updateStatusWith(status: .loaded)
+//        }
+//
+//        dataService.getStationData(withName: "Cobh") { data in
+//            self.updateStatusWith(status: .loaded)
+//        }
+//
+//        dataService.getStationData(withCode: "BFSTC") { data in
 //            self.updateStatusWith(status: .loaded)
 //        }
         
-//        dataService.getAllStationsData(withType: IrishRailAPI.StationType.mainline) { stations in
-//            self.viewModel.stations = stations
-//            self.updateStatusWith(status: .loaded)
-//        }
-        
-        dataService.getStationData(withName: "Cobh") { data in
-            self.updateStatusWith(status: .loaded)
+        dataService.getStationData(withStaticString: "br") { data in
+            switch data.status {
+            case .failure:
+                self.updateStatusWith(status: .error)
+            case .successs:
+                self.updateStatusWith(status: .loaded)
+            }
         }
     }
     
