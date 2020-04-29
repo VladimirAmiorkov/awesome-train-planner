@@ -146,13 +146,6 @@
 		881FD0D22455D53700C9E3E5 /* Main */ = {
 			isa = PBXGroup;
 			children = (
-				881FD0C52455AF9A00C9E3E5 /* Direction.swift */,
-				881FD0C72455AFCD00C9E3E5 /* Station.swift */,
-				881FD0C92455B02700C9E3E5 /* LoadingStatus.swift */,
-				885CB924245722C30077C67C /* StationData.swift */,
-				885CB929245819FE0077C67C /* StationFilter.swift */,
-				885CB92B245824080077C67C /* TrainPosition.swift */,
-				885CB92D245829000077C67C /* TrainMovement.swift */,
 				881FD0C32455ADBB00C9E3E5 /* MainViewModel.swift */,
 			);
 			path = Main;
@@ -182,8 +175,9 @@
 			isa = PBXGroup;
 			children = (
 				885CB92024570A480077C67C /* Helpers */,
-				8851BFA2245475370091C925 /* Models */,
-				8851BFA32454755E0091C925 /* ViewModels */,
+				88732D1C2459CF0B00627A1E /* Models */,
+				8851BFA2245475370091C925 /* ViewModels */,
+				8851BFA32454755E0091C925 /* Controllers */,
 				8851BFA1245475320091C925 /* Views */,
 				8851BF7024546EB20091C925 /* AppDelegate.swift */,
 				8851BF7224546EB20091C925 /* SceneDelegate.swift */,
@@ -230,19 +224,17 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
-		8851BFA2245475370091C925 /* Models */ = {
+		8851BFA2245475370091C925 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
 				88732D062459608E00627A1E /* Trains */,
 				88732CF8245952B600627A1E /* Stations */,
 				881FD0D22455D53700C9E3E5 /* Main */,
-				881FD0CF2455CABD00C9E3E5 /* Backend */,
-				881FD0CC2455B1EF00C9E3E5 /* Services */,
 			);
-			path = Models;
+			path = ViewModels;
 			sourceTree = "<group>";
 		};
-		8851BFA32454755E0091C925 /* ViewModels */ = {
+		8851BFA32454755E0091C925 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
 				88732D012459600200627A1E /* Trains */,
@@ -250,12 +242,13 @@
 				88732CF7245952A600627A1E /* Stations */,
 				8851BFA02454752B0091C925 /* Main */,
 			);
-			path = ViewModels;
+			path = Controllers;
 			sourceTree = "<group>";
 		};
 		885CB92024570A480077C67C /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				881FD0CC2455B1EF00C9E3E5 /* Services */,
 				885CB92124570A4E0077C67C /* XML */,
 			);
 			path = Helpers;
@@ -317,6 +310,45 @@
 				88732D07245960A100627A1E /* TrainsViewModel.swift */,
 			);
 			path = Trains;
+			sourceTree = "<group>";
+		};
+		88732D1C2459CF0B00627A1E /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				88732D1F2459CFC100627A1E /* Stations */,
+				88732D1E2459CF9A00627A1E /* Trains */,
+				881FD0C92455B02700C9E3E5 /* LoadingStatus.swift */,
+				88732D1D2459CF8300627A1E /* Main */,
+				881FD0CF2455CABD00C9E3E5 /* Backend */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		88732D1D2459CF8300627A1E /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				881FD0C52455AF9A00C9E3E5 /* Direction.swift */,
+			);
+			path = Main;
+			sourceTree = "<group>";
+		};
+		88732D1E2459CF9A00627A1E /* Trains */ = {
+			isa = PBXGroup;
+			children = (
+				885CB92B245824080077C67C /* TrainPosition.swift */,
+				885CB92D245829000077C67C /* TrainMovement.swift */,
+			);
+			path = Trains;
+			sourceTree = "<group>";
+		};
+		88732D1F2459CFC100627A1E /* Stations */ = {
+			isa = PBXGroup;
+			children = (
+				881FD0C72455AFCD00C9E3E5 /* Station.swift */,
+				885CB924245722C30077C67C /* StationData.swift */,
+				885CB929245819FE0077C67C /* StationFilter.swift */,
+			);
+			path = Stations;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
