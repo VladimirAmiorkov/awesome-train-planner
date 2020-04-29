@@ -19,11 +19,13 @@ protocol MainViewControllerProtocol {
 class MainViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, MainViewControllerProtocol {
 
     @IBOutlet weak var statusLabel: UILabel!
+    @IBOutlet weak var statusIndicator: UIActivityIndicatorView!
     @IBOutlet weak var fromTextField: UITextField!
     @IBOutlet weak var toTextField: UITextField!
     @IBOutlet weak var resultsList: UITableView!
     
-    private var statusSubscriber: AnyCancellable?
+    private var statusLabelSubscriber: AnyCancellable?
+    private var statusIndicatorSubscriber: AnyCancellable?
     private var listSubscriber: AnyCancellable?
     private var fromSubscriber: AnyCancellable?
     private var toSubscriber: AnyCancellable?
@@ -121,9 +123,25 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     private func setupBidnings() {
-        statusSubscriber = viewModel.$status.receive(on: DispatchQueue.main).map { (status: LoadingStatus) -> String? in
-            return status == LoadingStatus.loaded ? "Loaded" : "Loading"
+        statusLabelSubscriber = viewModel.$status.receive(on: DispatchQueue.main).map { (status: LoadingStatus) -> String? in
+            return status == LoadingStatus.loaded ? "Loaded" : status == LoadingStatus.loading ? "Loading" : "Failure"
         }.assign(to: \.text, on: statusLabel)
+        
+        statusIndicatorSubscriber = viewModel.$status.receive(on: DispatchQueue.main).sink(receiveValue: { completition in
+            switch completition {
+            case .loaded:
+                self.statusIndicator.stopAnimating()
+                self.statusIndicator.isHidden = true
+                return
+            case .loading:
+                self.statusIndicator.startAnimating()
+                self.statusIndicator.isHidden = false
+                return
+            case .error:
+                // TODO: user router to show an alert
+                return
+            }
+        })
         
         fromSubscriber = viewModel.$from.receive(on: DispatchQueue.main).assign(to: \.text, on: fromTextField)
         
