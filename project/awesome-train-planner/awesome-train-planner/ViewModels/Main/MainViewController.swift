@@ -14,6 +14,9 @@ protocol MainViewControllerProtocol {
     var dataService: DataService { get }
     
     init(viewModel: MainViewModel, andDataService dataService: DataService)
+    
+    func setupBidnings()
+    func updateStatusWith(status: LoadingStatus)
 }
 
 class MainViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, MainViewControllerProtocol {
@@ -110,7 +113,7 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     override func viewDidLoad() {
         super.viewDidLoad()
 //        resultsList.register(UINib(nibName: "ListCardCell", bundle: nil), forCellWithReuseIdentifier: "trainCard")
-        resultsList.register(TrainCardCell.self, forCellReuseIdentifier: "trainCard")
+        resultsList.register(TrainCardCell.self, forCellReuseIdentifier: TrainCardCell.reuseIdentifier)
         setupBidnings()
     }
 
@@ -118,11 +121,11 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         
     }
     
-    private func updateStatusWith(status: LoadingStatus) {
+    func updateStatusWith(status: LoadingStatus) {
         self.viewModel.status = status
     }
     
-    private func setupBidnings() {
+    func setupBidnings() {
         statusLabelSubscriber = viewModel.$status.receive(on: DispatchQueue.main).map { (status: LoadingStatus) -> String? in
             return status == LoadingStatus.loaded ? "Loaded" : status == LoadingStatus.loading ? "Loading" : "Failure"
         }.assign(to: \.text, on: statusLabel)
@@ -137,7 +140,7 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
                 self.statusIndicator.startAnimating()
                 self.statusIndicator.isHidden = false
                 return
-            case .error:
+            case .failure:
                 // TODO: user router to show an alert
                 return
             }
@@ -161,7 +164,7 @@ extension MainViewController {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "trainCard", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: TrainCardCell.reuseIdentifier, for: indexPath)
         cell.backgroundColor = .red
         
         return cell

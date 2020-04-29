@@ -8,17 +8,30 @@
 
 import Foundation
 import UIKit
+import Combine
 
 protocol StationsViewControllerProtocol {
     var viewModel: StationsViewModel { get }
     var dataService: DataService { get }
     
     init(viewModel: StationsViewModel, andDataService dataService: DataService)
+    
+    func setupBidnings()
+    func updateStatusWith(status: LoadingStatus)
 }
 
-class StationsViewController: UIViewController, StationsViewControllerProtocol {
+class StationsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, StationsViewControllerProtocol {
+    
     var viewModel: StationsViewModel
     var dataService: DataService
+    
+    @IBOutlet weak var statusLabel: UILabel!
+    @IBOutlet weak var statusIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var resultsList: UITableView!
+    
+    private var statusLabelSubscriber: AnyCancellable?
+    private var statusIndicatorSubscriber: AnyCancellable?
+    private var listSubscriber: AnyCancellable?
     
     @available(*, unavailable)
     required init?(coder: NSCoder) {
@@ -29,6 +42,89 @@ class StationsViewController: UIViewController, StationsViewControllerProtocol {
         self.viewModel = viewModel
         self.dataService = dataService
         super.init(nibName: nil, bundle: nil)
-        self.view.backgroundColor = .green
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        reloadTrains()
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        resultsList.register(StationCell.self, forCellReuseIdentifier: StationCell.reuseIdentifier)
+        setupBidnings()
+    }
+    
+    @IBAction func refreshTap(_ sender: UIButton) {
+        reloadTrains()
+    }
+    
+    func updateStatusWith(status: LoadingStatus) {
+        self.viewModel.status = status
+    }
+    
+    func setupBidnings() {
+        statusLabelSubscriber = viewModel.$status.receive(on: DispatchQueue.main).map { (status: LoadingStatus) -> String? in
+            return status == LoadingStatus.loaded ? "Loaded" : status == LoadingStatus.loading ? "Loading" : "Failure"
+        }.assign(to: \.text, on: statusLabel)
+        
+        statusIndicatorSubscriber = viewModel.$status.receive(on: DispatchQueue.main).sink(receiveValue: { completition in
+            switch completition {
+            case .loaded:
+                self.statusIndicator.stopAnimating()
+                self.statusIndicator.isHidden = true
+                return
+            case .loading:
+                self.statusIndicator.startAnimating()
+                self.statusIndicator.isHidden = false
+                return
+            case .failure:
+                // TODO: user router to show an alert
+                return
+            }
+        })
+        
+        listSubscriber = viewModel.$stations.receive(on: DispatchQueue.main).sink { receivedValue in
+            self.resultsList.reloadData()
+        }
+    }
+    
+    private func reloadTrains() {
+        updateStatusWith(status: .loading)
+        dataService.getAllStationsData() { data in
+            if let stations = data.data {
+                self.viewModel.stations = stations
+            }
+            
+            if data.status != .failure {
+                self.updateStatusWith(status: .loaded)
+            } else {
+                self.updateStatusWith(status: .failure)
+            }
+        }
+    }
+}
+
+// MARK: UITableViewDataSource
+extension StationsViewController {
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        viewModel.stations.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: StationCell.reuseIdentifier, for: indexPath)
+        let stationObj = viewModel.stations[indexPath.row]
+        cell.textLabel?.text = stationObj.StationDesc
+        
+        return cell
+    }
+    
+}
+
+// MARK: UITableViewDelegate
+extension StationsViewController {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        // TODO: go to StationViewControler via router
     }
 }

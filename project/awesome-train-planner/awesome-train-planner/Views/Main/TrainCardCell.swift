@@ -12,3 +12,8 @@ import UIKit
 class TrainCardCell: UITableViewCell {
     
 }
+
+extension TrainCardCell {
+    
+    static var reuseIdentifier: String = "trainCell"
+}

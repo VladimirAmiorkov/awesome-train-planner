@@ -9,6 +9,9 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="StationsViewController">
             <connections>
+                <outlet property="resultsList" destination="vGN-TD-XRm" id="iAU-zY-6WY"/>
+                <outlet property="statusIndicator" destination="yLh-SD-ziH" id="Y7B-5l-0sf"/>
+                <outlet property="statusLabel" destination="UZR-kV-N63" id="WLR-Sd-dyW"/>
                 <outlet property="view" destination="iN0-l3-epB" id="tY2-k3-PbU"/>
             </connections>
         </placeholder>
@@ -16,9 +19,57 @@
         <view contentMode="scaleToFill" id="iN0-l3-epB">
             <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" id="8bC-Xf-vdC">
+                    <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Loading ..." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UZR-kV-N63">
+                            <rect key="frame" x="167.5" y="118" width="79.5" height="21"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <nil key="textColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="yLh-SD-ziH">
+                            <rect key="frame" x="255" y="118" width="20" height="20"/>
+                        </activityIndicatorView>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="10S-Q2-2Gz">
+                            <rect key="frame" x="180.5" y="224" width="53" height="30"/>
+                            <state key="normal" title="Refresh"/>
+                            <connections>
+                                <action selector="refreshTap:" destination="-1" eventType="touchUpInside" id="A9N-ZX-RKz"/>
+                            </connections>
+                        </button>
+                        <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="vGN-TD-XRm">
+                            <rect key="frame" x="0.0" y="290" width="414" height="606"/>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                            <connections>
+                                <outlet property="dataSource" destination="-1" id="XxJ-v2-kJ2"/>
+                                <outlet property="delegate" destination="-1" id="sgc-0a-pcR"/>
+                            </connections>
+                        </tableView>
+                    </subviews>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                    <constraints>
+                        <constraint firstItem="vGN-TD-XRm" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="BQ1-cE-BXx"/>
+                        <constraint firstItem="vGN-TD-XRm" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="CFc-78-R2m"/>
+                        <constraint firstAttribute="bottom" secondItem="vGN-TD-XRm" secondAttribute="bottom" id="FPR-oa-FBT"/>
+                        <constraint firstItem="UZR-kV-N63" firstAttribute="centerX" secondItem="10S-Q2-2Gz" secondAttribute="centerX" id="JFe-mu-MRW"/>
+                        <constraint firstItem="yLh-SD-ziH" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="74" id="LhU-My-Av2"/>
+                        <constraint firstItem="vGN-TD-XRm" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" constant="34" id="NQi-LX-2kB"/>
+                        <constraint firstItem="vGN-TD-XRm" firstAttribute="top" secondItem="10S-Q2-2Gz" secondAttribute="bottom" constant="36" id="Q0p-sN-WNN"/>
+                        <constraint firstItem="10S-Q2-2Gz" firstAttribute="top" secondItem="UZR-kV-N63" secondAttribute="bottom" constant="85" id="R7h-LC-6gj"/>
+                        <constraint firstItem="vGN-TD-XRm" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="bdj-ZH-DI1"/>
+                        <constraint firstItem="UZR-kV-N63" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="e5g-a5-WXc"/>
+                        <constraint firstItem="yLh-SD-ziH" firstAttribute="leading" secondItem="UZR-kV-N63" secondAttribute="trailing" constant="8" id="oLH-cO-OwE"/>
+                        <constraint firstItem="UZR-kV-N63" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="74" id="uwk-O5-11w"/>
+                    </constraints>
+                    <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                </view>
+            </subviews>
             <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
-            <point key="canvasLocation" x="133" y="146"/>
+            <point key="canvasLocation" x="140.57971014492756" y="112.5"/>
         </view>
     </objects>
 </document>

@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import Combine
 
 protocol TrainsViewControllerProtocol {
     var viewModel: TrainsViewModel { get }
@@ -16,9 +17,17 @@ protocol TrainsViewControllerProtocol {
     init(viewModel: TrainsViewModel, andDataService dataService: DataService)
 }
 
-class TrainsViewController: UIViewController, TrainsViewControllerProtocol {
+class TrainsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, TrainsViewControllerProtocol {
     var viewModel: TrainsViewModel
     var dataService: DataService
+    
+    @IBOutlet weak var statusLabel: UILabel!
+    @IBOutlet weak var statusIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var resultsList: UITableView!
+    
+    private var statusLabelSubscriber: AnyCancellable?
+    private var statusIndicatorSubscriber: AnyCancellable?
+    private var listSubscriber: AnyCancellable?
     
     @available(*, unavailable)
     required init?(coder: NSCoder) {
@@ -29,6 +38,89 @@ class TrainsViewController: UIViewController, TrainsViewControllerProtocol {
         self.viewModel = viewModel
         self.dataService = dataService
         super.init(nibName: nil, bundle: nil)
-        self.view.backgroundColor = .blue
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        reloadStations()
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        resultsList.register(StationCell.self, forCellReuseIdentifier: StationCell.reuseIdentifier)
+        setupBidnings()
+    }
+    
+    @IBAction func refreshTap(_ sender: UIButton) {
+        reloadStations()
+    }
+    
+    func updateStatusWith(status: LoadingStatus) {
+        self.viewModel.status = status
+    }
+    
+    func setupBidnings() {
+        statusLabelSubscriber = viewModel.$status.receive(on: DispatchQueue.main).map { (status: LoadingStatus) -> String? in
+            return status == LoadingStatus.loaded ? "Loaded" : status == LoadingStatus.loading ? "Loading" : "Failure"
+        }.assign(to: \.text, on: statusLabel)
+        
+        statusIndicatorSubscriber = viewModel.$status.receive(on: DispatchQueue.main).sink(receiveValue: { completition in
+            switch completition {
+            case .loaded:
+                self.statusIndicator.stopAnimating()
+                self.statusIndicator.isHidden = true
+                return
+            case .loading:
+                self.statusIndicator.startAnimating()
+                self.statusIndicator.isHidden = false
+                return
+            case .failure:
+                // TODO: user router to show an alert
+                return
+            }
+        })
+        
+        listSubscriber = viewModel.$trainMovements.receive(on: DispatchQueue.main).sink { receivedValue in
+            self.resultsList.reloadData()
+        }
+    }
+    
+    private func reloadStations() {
+        updateStatusWith(status: .loading)
+        dataService.getCurrentTrains() { data in
+            if let trainMovements = data.data {
+                self.viewModel.trainMovements = trainMovements
+            }
+            
+            if data.status != .failure {
+                self.updateStatusWith(status: .loaded)
+            } else {
+                self.updateStatusWith(status: .failure)
+            }
+        }
+    }
+}
+
+// MARK: UITableViewDataSource
+extension TrainsViewController {
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        viewModel.trainMovements.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: StationCell.reuseIdentifier, for: indexPath)
+        let trainMovement = viewModel.trainMovements[indexPath.row]
+        cell.textLabel?.text = trainMovement.TrainCode
+        
+        return cell
+    }
+    
+}
+
+// MARK: UITableViewDelegate
+extension TrainsViewController {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        // TODO: go to StationViewControler via router
     }
 }

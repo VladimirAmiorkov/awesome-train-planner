@@ -8,6 +8,18 @@
 
 import Foundation
 
-class StationsViewModel {
+protocol StationsViewModelProtocol {
+    var status: LoadingStatus { get set }
+    var stations: [Station] { get set }
+}
+
+class StationsViewModel: StationsViewModelProtocol {
     
+    @Published var status: LoadingStatus
+    @Published var stations: [Station]
+    
+    init() {
+        self.status = .loading
+        self.stations = []
+    }
 }
