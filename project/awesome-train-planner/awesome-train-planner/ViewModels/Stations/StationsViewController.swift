@@ -12,6 +12,8 @@ import UIKit
 protocol StationsViewControllerProtocol {
     var viewModel: StationsViewModel { get }
     var dataService: DataService { get }
+    
+    init(viewModel: StationsViewModel, andDataService dataService: DataService)
 }
 
 class StationsViewController: UIViewController, StationsViewControllerProtocol {
@@ -23,7 +25,7 @@ class StationsViewController: UIViewController, StationsViewControllerProtocol {
         fatalError("init(coder:) has not been implemented")
     }
 
-    init(viewModel: StationsViewModel, andDataService dataService: DataService) {
+    required init(viewModel: StationsViewModel, andDataService dataService: DataService) {
         self.viewModel = viewModel
         self.dataService = dataService
         super.init(nibName: nil, bundle: nil)

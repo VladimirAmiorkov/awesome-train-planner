@@ -12,6 +12,8 @@ import Combine
 protocol MainViewControllerProtocol {
     var viewModel: MainViewModel { get }
     var dataService: DataService { get }
+    
+    init(viewModel: MainViewModel, andDataService dataService: DataService)
 }
 
 class MainViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, MainViewControllerProtocol {
@@ -34,7 +36,7 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         fatalError("init(coder:) has not been implemented")
     }
 
-    init(viewModel: MainViewModel, andDataService dataService: DataService) {
+    required init(viewModel: MainViewModel, andDataService dataService: DataService) {
         self.viewModel = viewModel
         self.dataService = dataService
         super.init(nibName: nil, bundle: nil)
