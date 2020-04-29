@@ -14,13 +14,37 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
-        // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
-        // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(frame: windowScene.coordinateSpace.bounds)
         window?.windowScene = windowScene
-        window?.rootViewController = MainViewController(viewModel: MainViewModel())
+        
+        
+        
+        
+
+        let mainViewController = MainViewController(viewModel: MainViewModel())
+        let mainTabItem = UITabBarItem()
+        mainTabItem.title = "Home"
+        mainTabItem.image = UIImage(named: "main-tabbar-icon")
+        mainViewController.tabBarItem = mainTabItem
+        
+        let stationsViewController = StationsViewController(viewModel: StationsViewModel());
+        let stationsTabItem = UITabBarItem()
+        stationsTabItem.title = "Stations"
+        stationsTabItem.image = UIImage(named: "stations-tabbar-icon")
+        stationsViewController.tabBarItem = stationsTabItem
+        
+        let trainsViewController = TrainsViewController(viewModel: TrainsViewModel());
+        let trainsTabItem = UITabBarItem()
+        trainsTabItem.title = "Trains"
+        trainsTabItem.image = UIImage(named: "trains-tabbar-icon")
+        trainsViewController.tabBarItem = trainsTabItem
+            
+        let tabBarController = TabBarViewController()
+        tabBarController.viewControllers = [mainViewController, stationsViewController, trainsViewController]
+        tabBarController.selectedViewController = mainViewController
+        
+        window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()
     }
 
