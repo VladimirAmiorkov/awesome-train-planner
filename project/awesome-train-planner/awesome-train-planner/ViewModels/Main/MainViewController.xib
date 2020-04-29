@@ -49,7 +49,7 @@
                             </connections>
                         </button>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Loading ..." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UZR-kV-N63">
-                            <rect key="frame" x="167.5" y="118" width="79" height="21"/>
+                            <rect key="frame" x="167.5" y="118" width="79.5" height="21"/>
                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                             <nil key="textColor"/>
                             <nil key="highlightedColor"/>
@@ -77,7 +77,6 @@
                         <constraint firstItem="vGN-TD-XRm" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="bdj-ZH-DI1"/>
                         <constraint firstItem="UZR-kV-N63" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="e5g-a5-WXc"/>
                         <constraint firstItem="h48-Iv-dlU" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="50" id="jbF-wi-1mc"/>
-                        <constraint firstItem="UZR-kV-N63" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="167.5" id="orY-b4-67L"/>
                         <constraint firstItem="UZR-kV-N63" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="74" id="uwk-O5-11w"/>
                         <constraint firstItem="9Ga-jl-AVk" firstAttribute="top" secondItem="UZR-kV-N63" secondAttribute="bottom" constant="36" id="ypT-QK-cED"/>
                     </constraints>
