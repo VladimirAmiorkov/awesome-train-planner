@@ -9,16 +9,23 @@
 import Foundation
 import UIKit
 
-class TrainsViewController: UIViewController {
+protocol TrainsViewControllerProtocol {
+    var viewModel: TrainsViewModel { get }
+    var dataService: DataService { get }
+}
+
+class TrainsViewController: UIViewController, TrainsViewControllerProtocol {
     var viewModel: TrainsViewModel
+    var dataService: DataService
     
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    init(viewModel: TrainsViewModel) {
+    init(viewModel: TrainsViewModel, andDataService dataService: DataService) {
         self.viewModel = viewModel
+        self.dataService = dataService
         super.init(nibName: nil, bundle: nil)
         self.view.backgroundColor = .blue
     }

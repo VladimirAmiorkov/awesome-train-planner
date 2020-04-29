@@ -22,19 +22,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         
 
-        let mainViewController = MainViewController(viewModel: MainViewModel())
+        let mainViewController = MainViewController(viewModel: MainViewModel(), andDataService: RailwayDataService())
         let mainTabItem = UITabBarItem()
         mainTabItem.title = "Home"
         mainTabItem.image = UIImage(named: "main-tabbar-icon")
         mainViewController.tabBarItem = mainTabItem
         
-        let stationsViewController = StationsViewController(viewModel: StationsViewModel());
+        let stationsViewController = StationsViewController(viewModel: StationsViewModel(), andDataService: RailwayDataService());
         let stationsTabItem = UITabBarItem()
         stationsTabItem.title = "Stations"
         stationsTabItem.image = UIImage(named: "stations-tabbar-icon")
         stationsViewController.tabBarItem = stationsTabItem
         
-        let trainsViewController = TrainsViewController(viewModel: TrainsViewModel());
+        let trainsViewController = TrainsViewController(viewModel: TrainsViewModel(), andDataService: RailwayDataService());
         let trainsTabItem = UITabBarItem()
         trainsTabItem.title = "Trains"
         trainsTabItem.image = UIImage(named: "trains-tabbar-icon")

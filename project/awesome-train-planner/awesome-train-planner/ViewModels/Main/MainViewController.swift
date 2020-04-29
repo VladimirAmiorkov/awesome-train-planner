@@ -9,7 +9,12 @@
 import UIKit
 import Combine
 
-class MainViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+protocol MainViewControllerProtocol {
+    var viewModel: MainViewModel { get }
+    var dataService: DataService { get }
+}
+
+class MainViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, MainViewControllerProtocol {
 
     @IBOutlet weak var statusLabel: UILabel!
     @IBOutlet weak var fromTextField: UITextField!
@@ -22,23 +27,16 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     private var toSubscriber: AnyCancellable?
     
     let viewModel: MainViewModel
-    let dataService: RailwayDataService
-    
-//    required init?(coder: NSCoder) {
-//        self.viewModel = MainViewModel()
-//        self.dataService = RailwayDataService()
-//
-//        super.init(coder: coder)
-//    }
+    let dataService: DataService
     
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    init(viewModel: MainViewModel) {
+    init(viewModel: MainViewModel, andDataService dataService: DataService) {
         self.viewModel = viewModel
-        self.dataService = RailwayDataService()
+        self.dataService = dataService
         super.init(nibName: nil, bundle: nil)
     }
     
