@@ -10,7 +10,7 @@ import Foundation
 
 protocol StationViewModelProtocol {
     
-    var station: Station { get set }
+    var station: Station { get }
 }
 
 class StationViewModel: StationViewModelProtocol {

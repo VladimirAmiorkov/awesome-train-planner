@@ -35,15 +35,18 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         stationsTabItem.image = UIImage(named: "stations-tabbar-icon")
         stationsViewController.tabBarItem = stationsTabItem
         stationsNavController.viewControllers = [stationsViewController]
+
+        let trainsNavController = UINavigationController()
+        trainsNavController.isNavigationBarHidden = true
         
-        let trainsViewController = TrainsViewController(viewModel: TrainsViewModel(), andDataService: RailwayDataService());
+        let trainsViewController = TrainsViewController(viewModel: TrainsViewModel(), andDataService: RailwayDataService(), andRouter: TrainsRouter(viewControler: trainsNavController));
         let trainsTabItem = UITabBarItem()
         trainsTabItem.title = "Trains"
         trainsTabItem.image = UIImage(named: "trains-tabbar-icon")
         trainsViewController.tabBarItem = trainsTabItem
-            
+        trainsNavController.viewControllers = [trainsViewController]
         
-        tabBarController.viewControllers = [mainViewController, stationsNavController, trainsViewController]
+        tabBarController.viewControllers = [mainViewController, stationsNavController, trainsNavController]
         tabBarController.selectedViewController = mainViewController
         
         window?.rootViewController = tabBarController

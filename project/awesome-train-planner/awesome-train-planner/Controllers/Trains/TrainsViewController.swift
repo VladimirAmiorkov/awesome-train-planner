@@ -13,11 +13,14 @@ import Combine
 protocol TrainsViewControllerProtocol {
     var viewModel: TrainsViewModel { get }
     var dataService: DataService { get }
+    var router: TrainsRouterProtocol { get }
     
-    init(viewModel: TrainsViewModel, andDataService dataService: DataService)
+    init(viewModel: TrainsViewModel, andDataService dataService: DataService, andRouter router: TrainsRouterProtocol)
 }
 
 class TrainsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, TrainsViewControllerProtocol {
+
+    var router: TrainsRouterProtocol
     var viewModel: TrainsViewModel
     var dataService: DataService
 
@@ -34,9 +37,10 @@ class TrainsViewController: UIViewController, UITableViewDelegate, UITableViewDa
         fatalError("init(coder:) has not been implemented")
     }
 
-    required init(viewModel: TrainsViewModel, andDataService dataService: DataService) {
+    required init(viewModel: TrainsViewModel, andDataService dataService: DataService, andRouter router: TrainsRouterProtocol) {
         self.viewModel = viewModel
         self.dataService = dataService
+        self.router = router
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -86,7 +90,7 @@ class TrainsViewController: UIViewController, UITableViewDelegate, UITableViewDa
             }
         })
         
-        listSubscriber = viewModel.$trainMovements.receive(on: DispatchQueue.main).sink { receivedValue in
+        listSubscriber = viewModel.$trainPosition.receive(on: DispatchQueue.main).sink { receivedValue in
             self.resultsList.reloadData()
         }
     }
@@ -95,7 +99,7 @@ class TrainsViewController: UIViewController, UITableViewDelegate, UITableViewDa
         updateStatusWith(status: .loading)
         dataService.getCurrentTrains() { data in
             if let trainMovements = data.data {
-                self.viewModel.trainMovements = trainMovements
+                self.viewModel.trainPosition = trainMovements
             }
             
             if data.status != .failure {
@@ -111,7 +115,7 @@ class TrainsViewController: UIViewController, UITableViewDelegate, UITableViewDa
 extension TrainsViewController {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        viewModel.trainMovements.count
+        viewModel.trainPosition.count
     }
 
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -120,7 +124,7 @@ extension TrainsViewController {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: StationCell.reuseIdentifier, for: indexPath)
-        let trainMovement = viewModel.trainMovements[indexPath.row]
+        let trainMovement = viewModel.trainPosition[indexPath.row]
 
         cell.textLabel?.text = trainMovement.TrainCode
         
@@ -131,8 +135,10 @@ extension TrainsViewController {
 
 // MARK: UITableViewDelegate
 extension TrainsViewController {
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        // TODO: go to StationViewControler via router
+        let trainObj = viewModel.trainPosition[indexPath.row]
+        router.showDetailsWith(train: trainObj)
     }
 }
 

@@ -10,16 +10,16 @@ import Foundation
 
 protocol TrainsViewModelProtocol {
     var status: LoadingStatus { get set }
-    var trainMovements: [TrainPosition] { get set }
+    var trainPosition: [TrainPosition] { get set }
 }
 
 class TrainsViewModel: TrainsViewModelProtocol {
     
     @Published var status: LoadingStatus
-    @Published var trainMovements: [TrainPosition]
+    @Published var trainPosition: [TrainPosition]
     
     init() {
         self.status = .loading
-        self.trainMovements = []
+        self.trainPosition = []
     }
 }

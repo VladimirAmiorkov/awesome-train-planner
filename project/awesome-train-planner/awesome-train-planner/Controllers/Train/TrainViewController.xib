@@ -7,14 +7,14 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="StationViewController" customModule="Train_Planner" customModuleProvider="target">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="TrainViewController">
             <connections>
-                <outlet property="codeLabel" destination="Gfd-ot-xg6" id="i1R-fq-83m"/>
-                <outlet property="idLabel" destination="bTR-ay-mxg" id="JLJ-Ts-Kzt"/>
-                <outlet property="latitudeLabel" destination="YIr-lV-O4b" id="kPF-WE-ZCh"/>
-                <outlet property="longtitudeLabel" destination="WlI-bz-KEX" id="3kD-2D-4lg"/>
-                <outlet property="nameLabel" destination="DfM-3U-4cV" id="WjQ-Jv-7uU"/>
-                <outlet property="view" destination="iN0-l3-epB" id="2JY-Nx-9n2"/>
+                <outlet property="codeLabel" destination="Gfd-ot-xg6" id="fsF-qA-TG0"/>
+                <outlet property="idLabel" destination="bTR-ay-mxg" id="oJg-zk-PEx"/>
+                <outlet property="latitudeLabel" destination="YIr-lV-O4b" id="1Tb-vh-pcW"/>
+                <outlet property="longtitudeLabel" destination="WlI-bz-KEX" id="wHo-Kw-4xy"/>
+                <outlet property="nameLabel" destination="DfM-3U-4cV" id="pPb-og-Qbt"/>
+                <outlet property="view" destination="iN0-l3-epB" id="ph2-JM-HW4"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
@@ -32,7 +32,7 @@
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aPO-Ap-pQS" userLabel="contentView">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="370"/>
                                     <subviews>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Station Details" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="erI-dl-l8W">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Train Details" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="erI-dl-l8W">
                                             <rect key="frame" x="98" y="30" width="218" height="41"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="218" id="d5H-eD-9F3"/>
@@ -102,7 +102,7 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
-                                    <color key="backgroundColor" systemColor="systemGreenColor" red="0.20392156859999999" green="0.78039215689999997" blue="0.34901960780000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <color key="backgroundColor" systemColor="systemTealColor" red="0.35294117650000001" green="0.7843137255" blue="0.98039215690000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     <constraints>
                                         <constraint firstItem="DfM-3U-4cV" firstAttribute="width" secondItem="aPO-Ap-pQS" secondAttribute="width" multiplier="0.5" id="1Xr-dc-CEg"/>
                                         <constraint firstItem="MaB-xU-XQU" firstAttribute="top" secondItem="rp3-78-6d4" secondAttribute="bottom" constant="20" id="1dp-uj-Nlf"/>
@@ -145,7 +145,7 @@
                             <viewLayoutGuide key="frameLayoutGuide" id="Ezc-Vg-yGs"/>
                         </scrollView>
                     </subviews>
-                    <color key="backgroundColor" systemColor="systemGreenColor" red="0.20392156859999999" green="0.78039215689999997" blue="0.34901960780000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <color key="backgroundColor" systemColor="systemTealColor" red="0.35294117650000001" green="0.7843137255" blue="0.98039215690000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <constraints>
                         <constraint firstItem="aPO-Ap-pQS" firstAttribute="width" secondItem="6Tk-OE-BBY" secondAttribute="width" id="SyR-gX-Q1O"/>
                         <constraint firstItem="6Tk-OE-BBY" firstAttribute="leading" secondItem="FAz-BP-JEN" secondAttribute="leading" id="WYy-hN-EJt"/>
