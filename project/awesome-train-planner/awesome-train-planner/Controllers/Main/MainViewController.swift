@@ -21,13 +21,11 @@ protocol MainViewControllerProtocol {
 
 class MainViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, MainViewControllerProtocol {
 
-    @IBOutlet weak var statusLabel: UILabel!
     @IBOutlet weak var statusIndicator: UIActivityIndicatorView!
     @IBOutlet weak var fromTextField: UITextField!
     @IBOutlet weak var toTextField: UITextField!
     @IBOutlet weak var resultsList: UITableView!
-    
-    private var statusLabelSubscriber: AnyCancellable?
+
     private var statusIndicatorSubscriber: AnyCancellable?
     private var listSubscriber: AnyCancellable?
     private var fromSubscriber: AnyCancellable?
@@ -133,10 +131,6 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func setupBidnings() {
-        statusLabelSubscriber = viewModel.$status.receive(on: DispatchQueue.main).map { (status: LoadingStatus) -> String? in
-            return status == LoadingStatus.loaded ? "Loaded" : status == LoadingStatus.loading ? "Loading" : "Failure"
-        }.assign(to: \.text, on: statusLabel)
-        
         statusIndicatorSubscriber = viewModel.$status.receive(on: DispatchQueue.main).sink(receiveValue: { completition in
             switch completition {
             case .loaded:
