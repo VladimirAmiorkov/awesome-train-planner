@@ -33,14 +33,14 @@
                             <rect key="frame" x="275" y="128.5" width="20" height="20"/>
                         </activityIndicatorView>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="10S-Q2-2Gz">
-                            <rect key="frame" x="180.5" y="244" width="53" height="30"/>
+                            <rect key="frame" x="180.5" y="174" width="53" height="30"/>
                             <state key="normal" title="Refresh"/>
                             <connections>
                                 <action selector="refreshTap:" destination="-1" eventType="touchUpInside" id="A9N-ZX-RKz"/>
                             </connections>
                         </button>
                         <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="vGN-TD-XRm">
-                            <rect key="frame" x="0.0" y="310" width="414" height="586"/>
+                            <rect key="frame" x="0.0" y="219" width="414" height="677"/>
                             <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                             <color key="sectionIndexBackgroundColor" systemColor="systemGreenColor" red="0.20392156859999999" green="0.78039215689999997" blue="0.34901960780000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <connections>
@@ -56,8 +56,8 @@
                         <constraint firstAttribute="bottom" secondItem="vGN-TD-XRm" secondAttribute="bottom" id="FPR-oa-FBT"/>
                         <constraint firstItem="UZR-kV-N63" firstAttribute="centerX" secondItem="10S-Q2-2Gz" secondAttribute="centerX" id="JFe-mu-MRW"/>
                         <constraint firstItem="vGN-TD-XRm" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" constant="34" id="NQi-LX-2kB"/>
-                        <constraint firstItem="vGN-TD-XRm" firstAttribute="top" secondItem="10S-Q2-2Gz" secondAttribute="bottom" constant="36" id="Q0p-sN-WNN"/>
-                        <constraint firstItem="10S-Q2-2Gz" firstAttribute="top" secondItem="UZR-kV-N63" secondAttribute="bottom" constant="85" id="R7h-LC-6gj"/>
+                        <constraint firstItem="vGN-TD-XRm" firstAttribute="top" secondItem="10S-Q2-2Gz" secondAttribute="bottom" constant="15" id="Q0p-sN-WNN"/>
+                        <constraint firstItem="10S-Q2-2Gz" firstAttribute="top" secondItem="UZR-kV-N63" secondAttribute="bottom" constant="15" id="R7h-LC-6gj"/>
                         <constraint firstItem="vGN-TD-XRm" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="bdj-ZH-DI1"/>
                         <constraint firstItem="UZR-kV-N63" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="e5g-a5-WXc"/>
                         <constraint firstItem="yLh-SD-ziH" firstAttribute="centerY" secondItem="UZR-kV-N63" secondAttribute="centerY" id="kYe-hL-0d7"/>
