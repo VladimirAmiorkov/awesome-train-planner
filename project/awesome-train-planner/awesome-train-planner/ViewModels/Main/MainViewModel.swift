@@ -26,8 +26,8 @@ class MainViewModel: MainViewModelProtocol {
     
     init() {
         self.status = .loading
-        self.from = "Arklow"
-        self.to = "Shankill"
+        self.from = "Shankill"
+        self.to = "Arklow"
         self.directions = []
         self.stations = []
     }

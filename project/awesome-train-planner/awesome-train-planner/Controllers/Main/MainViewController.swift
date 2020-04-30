@@ -48,14 +48,23 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        // TODO: get real data for "directions"
-        dataService.getAllStationsData() { data in
-            if let stations = data.data {
-                self.viewModel.stations = stations
-            }
 
-            self.updateStatusWith(status: .loaded)
+        guard let from = viewModel.from, let to = viewModel.to else {
+            return
         }
+        
+        dataService.getAllTrainsMovementsFrom(from) { data in
+
+        }
+
+        
+//        dataService.getAllStationsData() { data in
+//            if let stations = data.data {
+//                self.viewModel.stations = stations
+//            }
+//
+//            self.updateStatusWith(status: .loaded)
+//        }
 //
 //        dataService.getAllStationsData(withType: IrishRailAPI.StationType.mainline) { data in
 //            if let stations = data.data {
@@ -120,7 +129,7 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     // MARK: IBActions
 
     @IBAction func searchTap(_ sender: UIButton) {
-        
+        // TODO: get new directions from `dataService`
     }
 
     @objc func dismissKeyboard() {

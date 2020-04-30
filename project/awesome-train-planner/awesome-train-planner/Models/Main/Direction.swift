@@ -11,6 +11,6 @@ import Foundation
 struct Direction {
     let from: String
     let to: String
-    let station: Station
+    let trainCode: String
     let time: Date
 }

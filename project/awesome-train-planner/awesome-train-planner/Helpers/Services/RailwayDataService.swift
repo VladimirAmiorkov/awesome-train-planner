@@ -12,13 +12,15 @@ import Combine
 protocol DataService {
     func getAllStationsData(_ completion: @escaping (RailwaysResponse<[Station]>) -> Void) -> Void
     func getAllStationsData(withType type: IrishRailAPI.StationType, _ completion: @escaping (RailwaysResponse<[Station]>) -> Void)
-    func getStationData(withName name: String, _ completion: @escaping (RailwaysResponse<StationData>) -> Void)
+    func getStationData(withName name: String, _ completion: @escaping (RailwaysResponse<[StationData]>) -> Void)
     func getStationData(withCode code: String, _ completion: @escaping (RailwaysResponse<StationData>) -> Void)
     func getStationData(withStaticString query: String, _ completion: @escaping (RailwaysResponse<[StationFilter]>) -> Void)
     
     func getCurrentTrains(_ completion: @escaping (RailwaysResponse<[TrainPosition]>) -> Void) -> Void
-    func getCurrentTrains(withType type: IrishRailAPI.TrainType, _ completion: @escaping (RailwaysResponse<[TrainPosition]>) -> Void) -> Void
-    func getTrainMovements(byId id: String, andDate date: String, _ completion: @escaping (RailwaysResponse<[TrainMovement]>) -> Void) -> Void
+    func getCurrentTrains(withType type: IrishRailAPI.TrainType, _ completion: @escaping (RailwaysResponse<[TrainPosition]>) -> Void)
+    func getTrainMovements(byId id: String, andDate date: String, _ completion: @escaping (RailwaysResponse<[TrainMovement]>) -> Void)
+
+    func getAllTrainsMovementsFrom(_ from: String, _ completion: @escaping (RailwaysResponse<[[TrainMovement]]>) -> Void)
 }
 
 class RailwayDataService: NSObject, DataService, XMLParserDelegate {
@@ -46,10 +48,10 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
         getStationsWith(url: url, completion: completion)
     }
     
-    func getStationData(withName name: String, _ completion: @escaping (RailwaysResponse<StationData>) -> Void) {
+    func getStationData(withName name: String, _ completion: @escaping (RailwaysResponse<[StationData]>) -> Void) {
         guard let url = api.getStationData(withName: name) else { return }
         
-        getDataObjectWith(url: url, andParserDelegate: self.stationDataParserDelegate, completion: completion)
+        getDataArrayWith(url: url, andParserDelegate: self.stationDataParserDelegate, completion: completion)
     }
     
     func getStationData(withCode code: String, _ completion: @escaping (RailwaysResponse<StationData>) -> Void) {
@@ -82,6 +84,49 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
         guard let url = api.getTrainMovements(byId: id, andDate: date) else { return }
         
         getDataArrayWith(url: url, andParserDelegate: trainMovementsParserDelegate, completion: completion)
+    }
+
+    // MARK: Directions
+
+    private func findDirectionsFrom(_ from: String, to: String) {
+
+    }
+
+    func getAllTrainsMovementsFrom(_ from: String, _ completion: @escaping (RailwaysResponse<[[TrainMovement]]>) -> Void) {
+        let directions = [[TrainMovement]]()
+        let response = RailwaysResponse<[[TrainMovement]]>(data: directions)
+
+        getStationData(withName: from) { receivedData in
+            guard let data = receivedData.data else {
+                response.data = nil
+                response.error = receivedData.error
+                completion(response)
+                return
+            }
+
+            let firstSrtation = data[0]
+            self.getTrainMovementsRecursive(byId: firstSrtation.Traincode, andDate: firstSrtation.Traindate, andResultData: [[TrainMovement]](), andSourceData: data) { trainMovemenetsData in
+                response.data = trainMovemenetsData
+                response.error = nil
+                completion(response)
+            }
+        }
+    }
+
+    private func getTrainMovementsRecursive(byId id: String, andDate date: String, andResultData resultData: [[TrainMovement]], andSourceData sourceData: [StationData],_ completion: @escaping ([[TrainMovement]]) -> Void) {
+        self.getTrainMovements(byId: id, andDate: date) { trainData in
+            guard let currentTrainData = trainData.data else { return }
+            var newResult = resultData
+            newResult.append(currentTrainData)
+
+            let nextIndex = resultData.count
+            if nextIndex < sourceData.count {
+                let direction = sourceData[nextIndex]
+                self.getTrainMovementsRecursive(byId: direction.Traincode, andDate: direction.Traindate, andResultData: newResult, andSourceData: sourceData, completion)
+            } else {
+                completion(resultData)
+            }
+        }
     }
     
     // MARK: Helper functions
