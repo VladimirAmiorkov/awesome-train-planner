@@ -23,9 +23,9 @@ class TrainViewController: UIViewController, TrainViewControllerProtocol {
 
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var codeLabel: UILabel!
-    @IBOutlet weak var idLabel: UILabel!
-    @IBOutlet weak var latitudeLabel: UILabel!
-    @IBOutlet weak var longtitudeLabel: UILabel!
+    @IBOutlet weak var directionLabel: UILabel!
+    @IBOutlet weak var dateLabel: UILabel!
+    @IBOutlet weak var messageLabel: UILabel!
 
     private var trainMovementSubscriber: AnyCancellable?
 
@@ -56,10 +56,10 @@ class TrainViewController: UIViewController, TrainViewControllerProtocol {
     func setupBidnings() {
         trainMovementSubscriber = viewModel.$train.receive(on: DispatchQueue.main).sink(receiveValue: { receiveValue in
             self.nameLabel.text = receiveValue.TrainCode
-//            self.codeLabel.text = receiveValue.StationCode
-//            self.idLabel.text = receiveValue.StationId
-//            self.latitudeLabel.text = receiveValue.StationLatitude
-//            self.longtitudeLabel.text = receiveValue.StationLongitude
+            self.codeLabel.text = receiveValue.TrainCode
+            self.directionLabel.text = receiveValue.Direction
+            self.dateLabel.text = receiveValue.TrainDate
+            self.messageLabel.text = receiveValue.PublicMessage.replacingOccurrences(of: "\\n", with: "\n")
         })
     }
 }
