@@ -16,9 +16,6 @@ protocol StationsViewControllerProtocol {
     var router: StationsRouterProtocol { get }
     
     init(viewModel: StationsViewModel, andDataService dataService: DataService, andRouter router: StationsRouterProtocol)
-    
-    func setupBidnings()
-    func updateStatusWith(status: LoadingStatus)
 }
 
 class StationsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, StationsViewControllerProtocol {
@@ -34,6 +31,8 @@ class StationsViewController: UIViewController, UITableViewDelegate, UITableView
     private var statusLabelSubscriber: AnyCancellable?
     private var statusIndicatorSubscriber: AnyCancellable?
     private var listSubscriber: AnyCancellable?
+
+    // MARK: Initialization
     
     @available(*, unavailable)
     required init?(coder: NSCoder) {
@@ -46,8 +45,12 @@ class StationsViewController: UIViewController, UITableViewDelegate, UITableView
         self.router = router
         super.init(nibName: nil, bundle: nil)
     }
+
+    // MARK: - Lifecycle
     
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupView()
         reloadData()
     }
     
@@ -57,16 +60,22 @@ class StationsViewController: UIViewController, UITableViewDelegate, UITableView
         resultsList.register(StationCell.self, forCellReuseIdentifier: StationCell.reuseIdentifier)
         setupBidnings()
     }
+
+    // MARK: IBActions
     
     @IBAction func refreshTap(_ sender: UIButton) {
         reloadData()
     }
+
+    private func setupView() {
+        resultsList.backgroundColor = listColor
+    }
     
-    func updateStatusWith(status: LoadingStatus) {
+    private func updateStatusWith(status: LoadingStatus) {
         self.viewModel.status = status
     }
     
-    func setupBidnings() {
+    private func setupBidnings() {
         statusLabelSubscriber = viewModel.$status.receive(on: DispatchQueue.main).map { (status: LoadingStatus) -> String? in
             return status == LoadingStatus.loaded ? "Loaded" : status == LoadingStatus.loading ? "Loading" : "Failure"
         }.assign(to: \.text, on: statusLabel)
@@ -114,10 +123,15 @@ extension StationsViewController {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         viewModel.stations.count
     }
+
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        cell.backgroundColor = listColor
+    }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: StationCell.reuseIdentifier, for: indexPath)
         let stationObj = viewModel.stations[indexPath.row]
+
         cell.textLabel?.text = stationObj.StationDesc
         
         return cell
@@ -131,4 +145,9 @@ extension StationsViewController {
         let stationObj = viewModel.stations[indexPath.row]
         router.showDetailsWith(station: stationObj)
     }
+}
+
+// MARK: Constaints
+private extension StationsViewController {
+    private var listColor: UIColor { .systemGreen }
 }

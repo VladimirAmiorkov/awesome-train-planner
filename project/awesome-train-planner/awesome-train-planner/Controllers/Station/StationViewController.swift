@@ -30,6 +30,7 @@ class StationViewController: UIViewController, StationViewControllerProtocol {
     private var stationSubscriber: AnyCancellable?
 
     // MARK: Initialization
+    
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -43,7 +44,7 @@ class StationViewController: UIViewController, StationViewControllerProtocol {
     // MARK: - Lifecycle
 
     override func viewWillAppear(_ animated: Bool) {
-
+        super.viewWillAppear(animated)
     }
 
     override func viewDidLoad() {

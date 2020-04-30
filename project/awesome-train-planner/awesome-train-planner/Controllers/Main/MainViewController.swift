@@ -35,6 +35,8 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     let viewModel: MainViewModel
     let dataService: DataService
+
+    // MARK: Initialization
     
     @available(*, unavailable)
     required init?(coder: NSCoder) {
@@ -46,8 +48,11 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         self.dataService = dataService
         super.init(nibName: nil, bundle: nil)
     }
+
+    // MARK: - Lifecycle
     
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         // TODO: get real data for "directions"
         dataService.getAllStationsData() { data in
             if let stations = data.data {
@@ -116,6 +121,8 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         resultsList.register(TrainCardCell.self, forCellReuseIdentifier: TrainCardCell.reuseIdentifier)
         setupBidnings()
     }
+
+    // MARK: IBActions
 
     @IBAction func searchTap(_ sender: UIButton) {
         

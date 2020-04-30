@@ -28,7 +28,9 @@ class TrainsViewController: UIViewController, UITableViewDelegate, UITableViewDa
     private var statusLabelSubscriber: AnyCancellable?
     private var statusIndicatorSubscriber: AnyCancellable?
     private var listSubscriber: AnyCancellable?
-    
+
+    // MARK: Initialization
+
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -39,8 +41,12 @@ class TrainsViewController: UIViewController, UITableViewDelegate, UITableViewDa
         self.dataService = dataService
         super.init(nibName: nil, bundle: nil)
     }
+
+    // MARK: - Lifecycle
     
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupView()
         reloadStations()
     }
     
@@ -50,16 +56,22 @@ class TrainsViewController: UIViewController, UITableViewDelegate, UITableViewDa
         resultsList.register(StationCell.self, forCellReuseIdentifier: StationCell.reuseIdentifier)
         setupBidnings()
     }
+
+    // MARK: IBActions
     
     @IBAction func refreshTap(_ sender: UIButton) {
         reloadStations()
     }
+
+    private func setupView() {
+        resultsList.backgroundColor = listColor
+    }
     
-    func updateStatusWith(status: LoadingStatus) {
+    private func updateStatusWith(status: LoadingStatus) {
         self.viewModel.status = status
     }
     
-    func setupBidnings() {
+    private func setupBidnings() {
         statusLabelSubscriber = viewModel.$status.receive(on: DispatchQueue.main).map { (status: LoadingStatus) -> String? in
             return status == LoadingStatus.loaded ? "Loaded" : status == LoadingStatus.loading ? "Loading" : "Failure"
         }.assign(to: \.text, on: statusLabel)
@@ -107,10 +119,15 @@ extension TrainsViewController {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         viewModel.trainMovements.count
     }
+
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        cell.backgroundColor = listColor
+    }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: StationCell.reuseIdentifier, for: indexPath)
         let trainMovement = viewModel.trainMovements[indexPath.row]
+
         cell.textLabel?.text = trainMovement.TrainCode
         
         return cell
@@ -123,4 +140,9 @@ extension TrainsViewController {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // TODO: go to StationViewControler via router
     }
+}
+
+// MARK: Constaints
+private extension TrainsViewController {
+    private var listColor: UIColor { .systemOrange }
 }
