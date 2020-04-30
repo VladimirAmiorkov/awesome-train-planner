@@ -14,9 +14,6 @@ protocol MainViewControllerProtocol {
     var dataService: DataService { get }
     
     init(viewModel: MainViewModel, andDataService dataService: DataService)
-    
-    func setupBidnings()
-    func updateStatusWith(status: LoadingStatus)
 }
 
 class MainViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, MainViewControllerProtocol {
@@ -115,8 +112,8 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        resultsList.register(UINib(nibName: "ListCardCell", bundle: nil), forCellWithReuseIdentifier: "trainCard")
-        resultsList.register(TrainCardCell.self, forCellReuseIdentifier: TrainCardCell.reuseIdentifier)
+
+        setupView()
         setupBidnings()
     }
 
@@ -125,12 +122,19 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     @IBAction func searchTap(_ sender: UIButton) {
         
     }
-    
-    func updateStatusWith(status: LoadingStatus) {
-        self.viewModel.status = status
+
+    @objc func dismissKeyboard() {
+        //Causes the view (or one of its embedded text fields) to resign the first responder status.
+        view.endEditing(true)
     }
-    
-    func setupBidnings() {
+
+    private func setupView() {
+        resultsList.register(TrainCardCell.self, forCellReuseIdentifier: TrainCardCell.reuseIdentifier)
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.dismissKeyboard))
+        view.addGestureRecognizer(tap)
+    }
+
+    private func setupBidnings() {
         statusIndicatorSubscriber = viewModel.$status.receive(on: DispatchQueue.main).sink(receiveValue: { completition in
             switch completition {
             case .loaded:
@@ -155,6 +159,11 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
             self.resultsList.reloadData()
         }
     }
+
+    private func updateStatusWith(status: LoadingStatus) {
+        self.viewModel.status = status
+    }
+
 }
 
 // MARK: UITableViewDataSource
