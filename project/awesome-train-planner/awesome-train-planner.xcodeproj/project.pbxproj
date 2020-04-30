@@ -36,6 +36,10 @@
 		88732D08245960A100627A1E /* TrainsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88732D07245960A100627A1E /* TrainsViewModel.swift */; };
 		88732D0A245960F700627A1E /* StationsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88732D09245960F700627A1E /* StationsViewModel.swift */; };
 		88732D132459BD7600627A1E /* StationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88732D122459BD7500627A1E /* StationCell.swift */; };
+		88732D252459D06100627A1E /* StationsRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88732D242459D06100627A1E /* StationsRouter.swift */; };
+		88732D2A245AA68500627A1E /* StationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88732D29245AA68500627A1E /* StationViewController.swift */; };
+		88732D2C245AA69800627A1E /* StationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 88732D2B245AA69800627A1E /* StationViewController.xib */; };
+		88732D2E245AA6E400627A1E /* StationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88732D2D245AA6E400627A1E /* StationViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -91,6 +95,10 @@
 		88732D07245960A100627A1E /* TrainsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainsViewModel.swift; sourceTree = "<group>"; };
 		88732D09245960F700627A1E /* StationsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationsViewModel.swift; sourceTree = "<group>"; };
 		88732D122459BD7500627A1E /* StationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationCell.swift; sourceTree = "<group>"; };
+		88732D242459D06100627A1E /* StationsRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationsRouter.swift; sourceTree = "<group>"; };
+		88732D29245AA68500627A1E /* StationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationViewController.swift; sourceTree = "<group>"; };
+		88732D2B245AA69800627A1E /* StationViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = StationViewController.xib; sourceTree = "<group>"; };
+		88732D2D245AA6E400627A1E /* StationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -174,11 +182,12 @@
 		8851BF6F24546EB20091C925 /* awesome-train-planner */ = {
 			isa = PBXGroup;
 			children = (
-				885CB92024570A480077C67C /* Helpers */,
+				88732D202459D01A00627A1E /* Routers */,
 				88732D1C2459CF0B00627A1E /* Models */,
 				8851BFA2245475370091C925 /* ViewModels */,
 				8851BFA32454755E0091C925 /* Controllers */,
 				8851BFA1245475320091C925 /* Views */,
+				885CB92024570A480077C67C /* Helpers */,
 				8851BF7024546EB20091C925 /* AppDelegate.swift */,
 				8851BF7224546EB20091C925 /* SceneDelegate.swift */,
 				8851BF7924546EB30091C925 /* Assets.xcassets */,
@@ -218,8 +227,8 @@
 		8851BFA1245475320091C925 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				88732CF9245952C100627A1E /* Stations */,
 				881FD0CB2455B1DD00C9E3E5 /* Main */,
+				88732CF9245952C100627A1E /* Stations */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -227,9 +236,10 @@
 		8851BFA2245475370091C925 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
-				88732D062459608E00627A1E /* Trains */,
-				88732CF8245952B600627A1E /* Stations */,
 				881FD0D22455D53700C9E3E5 /* Main */,
+				88732CF8245952B600627A1E /* Stations */,
+				88732D28245AA65600627A1E /* Station */,
+				88732D062459608E00627A1E /* Trains */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -237,10 +247,11 @@
 		8851BFA32454755E0091C925 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				8851BFA02454752B0091C925 /* Main */,
+				88732CF7245952A600627A1E /* Stations */,
+				88732D26245AA63300627A1E /* Station */,
 				88732D012459600200627A1E /* Trains */,
 				88732CFE2459530200627A1E /* TabBar */,
-				88732CF7245952A600627A1E /* Stations */,
-				8851BFA02454752B0091C925 /* Main */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -315,11 +326,12 @@
 		88732D1C2459CF0B00627A1E /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				88732D1F2459CFC100627A1E /* Stations */,
-				88732D1E2459CF9A00627A1E /* Trains */,
-				881FD0C92455B02700C9E3E5 /* LoadingStatus.swift */,
 				88732D1D2459CF8300627A1E /* Main */,
+				88732D1F2459CFC100627A1E /* Stations */,
+				88732D27245AA64A00627A1E /* Station */,
+				88732D1E2459CF9A00627A1E /* Trains */,
 				881FD0CF2455CABD00C9E3E5 /* Backend */,
+				881FD0C92455B02700C9E3E5 /* LoadingStatus.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -349,6 +361,62 @@
 				885CB929245819FE0077C67C /* StationFilter.swift */,
 			);
 			path = Stations;
+			sourceTree = "<group>";
+		};
+		88732D202459D01A00627A1E /* Routers */ = {
+			isa = PBXGroup;
+			children = (
+				88732D212459D04300627A1E /* Main */,
+				88732D222459D04A00627A1E /* Stations */,
+				88732D232459D05000627A1E /* Trains */,
+			);
+			path = Routers;
+			sourceTree = "<group>";
+		};
+		88732D212459D04300627A1E /* Main */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Main;
+			sourceTree = "<group>";
+		};
+		88732D222459D04A00627A1E /* Stations */ = {
+			isa = PBXGroup;
+			children = (
+				88732D242459D06100627A1E /* StationsRouter.swift */,
+			);
+			path = Stations;
+			sourceTree = "<group>";
+		};
+		88732D232459D05000627A1E /* Trains */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Trains;
+			sourceTree = "<group>";
+		};
+		88732D26245AA63300627A1E /* Station */ = {
+			isa = PBXGroup;
+			children = (
+				88732D29245AA68500627A1E /* StationViewController.swift */,
+				88732D2B245AA69800627A1E /* StationViewController.xib */,
+			);
+			path = Station;
+			sourceTree = "<group>";
+		};
+		88732D27245AA64A00627A1E /* Station */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Station;
+			sourceTree = "<group>";
+		};
+		88732D28245AA65600627A1E /* Station */ = {
+			isa = PBXGroup;
+			children = (
+				88732D2D245AA6E400627A1E /* StationViewModel.swift */,
+			);
+			path = Station;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -455,6 +523,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				88732D2C245AA69800627A1E /* StationViewController.xib in Resources */,
 				8851BF7D24546EB30091C925 /* LaunchScreen.storyboard in Resources */,
 				88732D052459602700627A1E /* TrainsViewController.xib in Resources */,
 				8851BF7A24546EB30091C925 /* Assets.xcassets in Resources */,
@@ -486,10 +555,13 @@
 			files = (
 				8851BF7524546EB20091C925 /* MainViewController.swift in Sources */,
 				885CB92324570A8E0077C67C /* RailwaysDataXMLParserDelegate.swift in Sources */,
+				88732D2A245AA68500627A1E /* StationViewController.swift in Sources */,
 				8851BF7124546EB20091C925 /* AppDelegate.swift in Sources */,
 				885CB92A245819FE0077C67C /* StationFilter.swift in Sources */,
+				88732D2E245AA6E400627A1E /* StationViewModel.swift in Sources */,
 				88732D002459531300627A1E /* TabBarViewController.swift in Sources */,
 				88732D08245960A100627A1E /* TrainsViewModel.swift in Sources */,
+				88732D252459D06100627A1E /* StationsRouter.swift in Sources */,
 				881FD0CE2455B20D00C9E3E5 /* RailwayDataService.swift in Sources */,
 				8851BF7324546EB20091C925 /* SceneDelegate.swift in Sources */,
 				88732CF62458817200627A1E /* TrainCardCell.swift in Sources */,

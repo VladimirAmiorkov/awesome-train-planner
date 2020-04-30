@@ -13,8 +13,9 @@ import Combine
 protocol StationsViewControllerProtocol {
     var viewModel: StationsViewModel { get }
     var dataService: DataService { get }
+    var router: StationsRouterProtocol { get }
     
-    init(viewModel: StationsViewModel, andDataService dataService: DataService)
+    init(viewModel: StationsViewModel, andDataService dataService: DataService, andRouter router: StationsRouterProtocol)
     
     func setupBidnings()
     func updateStatusWith(status: LoadingStatus)
@@ -22,6 +23,7 @@ protocol StationsViewControllerProtocol {
 
 class StationsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, StationsViewControllerProtocol {
     
+    var router: StationsRouterProtocol
     var viewModel: StationsViewModel
     var dataService: DataService
     
@@ -38,14 +40,15 @@ class StationsViewController: UIViewController, UITableViewDelegate, UITableView
         fatalError("init(coder:) has not been implemented")
     }
 
-    required init(viewModel: StationsViewModel, andDataService dataService: DataService) {
+    required init(viewModel: StationsViewModel, andDataService dataService: DataService, andRouter router: StationsRouterProtocol) {
         self.viewModel = viewModel
         self.dataService = dataService
+        self.router = router
         super.init(nibName: nil, bundle: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        reloadTrains()
+        reloadData()
     }
     
     override func viewDidLoad() {
@@ -56,7 +59,7 @@ class StationsViewController: UIViewController, UITableViewDelegate, UITableView
     }
     
     @IBAction func refreshTap(_ sender: UIButton) {
-        reloadTrains()
+        reloadData()
     }
     
     func updateStatusWith(status: LoadingStatus) {
@@ -89,7 +92,7 @@ class StationsViewController: UIViewController, UITableViewDelegate, UITableView
         }
     }
     
-    private func reloadTrains() {
+    private func reloadData() {
         updateStatusWith(status: .loading)
         dataService.getAllStationsData() { data in
             if let stations = data.data {
@@ -125,6 +128,7 @@ extension StationsViewController {
 // MARK: UITableViewDelegate
 extension StationsViewController {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        // TODO: go to StationViewControler via router
+        let stationObj = viewModel.stations[indexPath.row]
+        router.showDetailsWith(station: stationObj)
     }
 }

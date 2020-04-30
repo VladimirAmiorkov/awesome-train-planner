@@ -18,17 +18,23 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(frame: windowScene.coordinateSpace.bounds)
         window?.windowScene = windowScene
 
+        let tabBarController = TabBarViewController()
+        
         let mainViewController = MainViewController(viewModel: MainViewModel(), andDataService: RailwayDataService())
         let mainTabItem = UITabBarItem()
         mainTabItem.title = "Home"
         mainTabItem.image = UIImage(named: "main-tabbar-icon")
         mainViewController.tabBarItem = mainTabItem
+
+        let stationsNavController = UINavigationController()
+        stationsNavController.isNavigationBarHidden = true
         
-        let stationsViewController = StationsViewController(viewModel: StationsViewModel(), andDataService: RailwayDataService());
+        let stationsViewController = StationsViewController(viewModel: StationsViewModel(), andDataService: RailwayDataService(), andRouter: StationsRouter(viewControler: stationsNavController))
         let stationsTabItem = UITabBarItem()
         stationsTabItem.title = "Stations"
         stationsTabItem.image = UIImage(named: "stations-tabbar-icon")
         stationsViewController.tabBarItem = stationsTabItem
+        stationsNavController.viewControllers = [stationsViewController]
         
         let trainsViewController = TrainsViewController(viewModel: TrainsViewModel(), andDataService: RailwayDataService());
         let trainsTabItem = UITabBarItem()
@@ -36,8 +42,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         trainsTabItem.image = UIImage(named: "trains-tabbar-icon")
         trainsViewController.tabBarItem = trainsTabItem
             
-        let tabBarController = TabBarViewController()
-        tabBarController.viewControllers = [mainViewController, stationsViewController, trainsViewController]
+        
+        tabBarController.viewControllers = [mainViewController, stationsNavController, trainsViewController]
         tabBarController.selectedViewController = mainViewController
         
         window?.rootViewController = tabBarController
