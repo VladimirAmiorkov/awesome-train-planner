@@ -67,12 +67,10 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
 
     @objc func dismissKeyboard() {
-        //Causes the view (or one of its embedded text fields) to resign the first responder status.
         view.endEditing(true)
     }
 
     private func setupView() {
-        resultsList.register(TrainCardCell.self, forCellReuseIdentifier: TrainCardCell.reuseIdentifier)
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         view.addGestureRecognizer(tap)
 
@@ -166,20 +164,24 @@ extension MainViewController {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: TrainCardCell.reuseIdentifier, for: indexPath)
+        var cell = tableView.dequeueReusableCell(withIdentifier: TrainCardCell.reuseIdentifier)
+        if cell == nil {
+            cell = UITableViewCell(style: .subtitle, reuseIdentifier: TrainCardCell.reuseIdentifier)
+        }
+
         let directionObj = viewModel.directions[indexPath.row]
 
-        let myString = "Train: " + directionObj.trainCode + " at: " + directionObj.time + " from: " + directionObj.from
+        let textString = "Train: " + directionObj.trainCode + " at: " + directionObj.time
+        let detailText =  "From: " + directionObj.from + " to: " + directionObj.to
         var myAttribute = [NSAttributedString.Key.foregroundColor: UIColor.systemOrange]
         if directionObj.isDirect {
             myAttribute = [NSAttributedString.Key.foregroundColor: UIColor.systemGreen]
         }
 
-        let myAttrString = NSAttributedString(string: myString, attributes: myAttribute)
-
-        cell.textLabel?.attributedText = myAttrString
+        cell!.textLabel?.attributedText =  NSAttributedString(string: textString, attributes: myAttribute)
+        cell!.detailTextLabel?.attributedText = NSAttributedString(string: detailText, attributes: myAttribute)
         
-        return cell
+        return cell!
     }
     
 }

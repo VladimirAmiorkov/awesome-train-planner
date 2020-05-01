@@ -54,8 +54,7 @@ class StationsViewController: UIViewController, UITableViewDelegate, UITableView
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        resultsList.register(StationCell.self, forCellReuseIdentifier: StationCell.reuseIdentifier)
+
         setupBidnings()
     }
 
@@ -67,6 +66,7 @@ class StationsViewController: UIViewController, UITableViewDelegate, UITableView
 
     private func setupView() {
         resultsList.backgroundColor = listColor
+        resultsList.register(StationCell.self, forCellReuseIdentifier: StationCell.reuseIdentifier)
     }
     
     private func updateStatusWith(status: LoadingStatus) {

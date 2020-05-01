@@ -14,4 +14,9 @@ struct Direction {
     let trainCode: String
     let time: String
     let isDirect: Bool
+    var hashcode: String {
+        get {
+            return trainCode + from + to
+        }
+    }
 }
