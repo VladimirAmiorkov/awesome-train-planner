@@ -23,7 +23,8 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     @IBOutlet weak var toTextField: UITextField!
     @IBOutlet weak var resultsList: UITableView!
     @IBOutlet weak var directTripSwitch: UISwitch!
-
+    @IBOutlet weak var statusLabel: UILabel!
+    
     private var statusIndicatorSubscriber: AnyCancellable?
     private var listSubscriber: AnyCancellable?
     private var fromSubscriber: AnyCancellable?
@@ -53,12 +54,12 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
-        searchForDirections()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        searchForDirections()
 
         setupView()
         setupBidnings()
@@ -88,6 +89,8 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
 
         toTextField.addTarget(self, action: #selector(toTextFieldDidChange(_:)), for: .editingChanged)
         toTextField.delegate = self
+
+//        statusLabel.isHidden = true
     }
 
     // MARK: UI Targets
@@ -103,8 +106,6 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     // MARK: Private functions
 
     private func searchForDirections() {
-        // TODO: Remove
-        viewModel.destination = "Seapoint"
         guard let origin = viewModel.origin, let destination = viewModel.destination else {
             return
         }
@@ -112,14 +113,14 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         lastSearchOrigin = origin
         lastSearchDestination = destination
 
-        updateStatusWith(status: .loading)
+        updateStatusWith(status: .loading, andMessage:  "Fetching data ...")
 
         dataService.findDirectionsFrom(origin, destination: destination, forDirectRoute: viewModel.directRoutesEnabled) { data in
             switch data.status {
             case .failure:
-                self.updateStatusWith(status: .failure)
+                self.updateStatusWith(status: .failure, andMessage: data.error?.localizedDescription ?? "Error fetching data ...")
             case .successs:
-                self.updateStatusWith(status: .loaded)
+                self.updateStatusWith(status: .loaded, andMessage: "Success")
                 if let route = data.data {
                     if route.isDirect {
                         if let directRoute = self.getDirectDirection(fromDirections: route.directions) {
@@ -151,7 +152,8 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
                 self.statusIndicator.isHidden = false
                 return
             case .failure:
-                // TODO: user router to show an alert
+                self.statusIndicator.stopAnimating()
+                self.statusIndicator.isHidden = true
                 return
             }
         })
@@ -167,8 +169,31 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         directTripSubscriber = viewModel.$directRoutesEnabled.receive(on: DispatchQueue.main).assign(to: \.isOn, on: directTripSwitch)
     }
 
-    private func updateStatusWith(status: LoadingStatus) {
-        self.viewModel.status = status
+    private func updateStatusWith(status: LoadingStatus, andMessage message: String) {
+        viewModel.status = status
+        if status == .failure {
+
+            UIView.animate(withDuration: 0.5) { [weak self] in
+                DispatchQueue.main.async { [unowned self] in
+                    self?.updateStatusLabelWith(color: .red, andMessage: message, andIsHidden: false)
+                }
+            }
+
+        } else {
+            UIView.animate(withDuration: 0.5) { [weak self] in
+                DispatchQueue.main.async { [unowned self] in
+                    self?.updateStatusLabelWith(color: .label, andMessage: message, andIsHidden: true)
+                }
+            }
+        }
+    }
+
+
+
+    @objc private func updateStatusLabelWith(color: UIColor, andMessage message: String, andIsHidden isHidden: Bool) {
+        statusLabel.textColor = color
+//        statusLabel.isHidden = isHidden
+        statusLabel.text = message
     }
 }
 
@@ -187,8 +212,8 @@ extension MainViewController {
 
         let directionObj = viewModel.directions[indexPath.row]
 
-        let textString = "Train: " + directionObj.trainCode + " at: " + directionObj.time
-        let detailText =  "From: " + directionObj.originName + " to: " + directionObj.destinationName
+        let textString = "Train: \(directionObj.trainCode) at: \(directionObj.time)"
+        let detailText =  "From: \(directionObj.originName) to: \(directionObj.destinationName)"
         var myAttribute = [NSAttributedString.Key.foregroundColor: UIColor.systemOrange]
         if directionObj.isDirect {
             myAttribute = [NSAttributedString.Key.foregroundColor: UIColor.systemGreen]

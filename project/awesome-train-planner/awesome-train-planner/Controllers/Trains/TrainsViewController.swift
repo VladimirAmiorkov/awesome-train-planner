@@ -48,14 +48,15 @@ class TrainsViewController: UIViewController, UITableViewDelegate, UITableViewDa
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setupView()
-        reloadStations()
+
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        resultsList.register(StationCell.self, forCellReuseIdentifier: StationCell.reuseIdentifier)
+
+        setupView()
+        reloadStations()
+
         setupBidnings()
     }
 
@@ -66,6 +67,7 @@ class TrainsViewController: UIViewController, UITableViewDelegate, UITableViewDa
     }
 
     private func setupView() {
+        resultsList.register(StationCell.self, forCellReuseIdentifier: StationCell.reuseIdentifier)
         resultsList.backgroundColor = listColor
     }
     
@@ -99,7 +101,7 @@ class TrainsViewController: UIViewController, UITableViewDelegate, UITableViewDa
         updateStatusWith(status: .loading)
         dataService.getCurrentTrains() { data in
             if let trainMovements = data.data {
-                self.viewModel.trainPosition = trainMovements
+                self.viewModel.trainPosition = trainMovements.sorted { $0.TrainCode.lowercased() < $1.TrainCode.lowercased() }
             }
             
             if data.status != .failure {
@@ -126,7 +128,7 @@ extension TrainsViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: StationCell.reuseIdentifier, for: indexPath)
         let trainMovement = viewModel.trainPosition[indexPath.row]
 
-        cell.textLabel?.text = trainMovement.TrainCode
+        cell.textLabel?.text = "Code: \(trainMovement.TrainCode)"
         
         return cell
     }

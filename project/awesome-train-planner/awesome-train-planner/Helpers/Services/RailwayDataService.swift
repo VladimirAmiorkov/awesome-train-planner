@@ -100,10 +100,10 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
         return route.destinationCode == destination
     }
 
-    private func getNotesFromRoutes(_ routes: [TrainRoute], inDict dict: [String: GKGraphNode]) -> [GKGraphNode] {
-        var routeNodes = [GKGraphNode]()
+    private func getNotesFromRoutes(_ routes: [TrainRoute], inDict dict: [StationGraphNode]) -> [StationGraphNode] {
+        var routeNodes = [StationGraphNode]()
         for route in routes {
-            if let routeNode = dict[route.hashcode] {
+            if let routeNode = dict.first(where: { $0.code == route.destinationCode }) {
                 routeNodes.append(routeNode)
             }
         }
@@ -111,68 +111,61 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
         return routeNodes
     }
 
-    private func getRoutesFromNodes(_ nodes: [GKGraphNode], inDict dict: [String: GKGraphNode], andRoutes routes: [TrainRoute]) -> [TrainRoute] {
+    private func getRoutesFromNodes(_ nodes: [StationGraphNode], inSourceNodes sourceNodes: [StationGraphNode], andRoutes routes: [TrainRoute]) -> [TrainRoute] {
         var routeNodes = [TrainRoute]()
         for node in nodes {
-            let nodeHashcode: String = (dict as NSDictionary).allKeys(for: node).first as! String
-            let route = routes.first { $0.hashcode == nodeHashcode }
-            if let route = route {
-                routeNodes.append(route)
+            if let currentNode: StationGraphNode = sourceNodes.first(where: { $0 == node }) {
+                let route = routes.first { $0.originCode == currentNode.code }
+                if let route = route {
+                    routeNodes.append(route)
+                }
             }
         }
 
         return routeNodes
     }
 
-    func findRouteWithGraphFor(directions: [[TrainRoute]], andOrigin origin: String, andDestination destination: String) -> Route {
-        let flattenDirections = directions.flatMap { $0 }
-
-        var nodesDict: [String: GKGraphNode] = [String: GKGraphNode]()
-        for direction in flattenDirections {
-            nodesDict[direction.hashcode] = GKGraphNode()
+    func findRouteWithGraphFor(routes: [[TrainRoute]], andOrigin originCode: String, andDestination destinationCode: String) -> Route {
+        let flattenRoutes = routes.flatMap { $0 }
+        var allStationCodes = [String]()
+        for direction in flattenRoutes {
+            allStationCodes.append(direction.destinationCode)
+            allStationCodes.append(direction.originCode)
         }
 
-        for direction in flattenDirections {
-            let connectionDirections = flattenDirections.filter { $0.originCode == direction.destinationCode }
+        var allNodes = [StationGraphNode]()
+        let uniqueStationCodes = Array(Set(allStationCodes))
+        for stationCode in uniqueStationCodes {
+            allNodes.append(StationGraphNode(code: stationCode))
+        }
 
-            let connectionNodes = getNotesFromRoutes(connectionDirections, inDict: nodesDict)
-            let currentNode = nodesDict[direction.hashcode]
-            currentNode?.addConnections(to: connectionNodes, bidirectional: false)
+        for stationCode in uniqueStationCodes {
+            let currentNode = allNodes.first { $0.code == stationCode }
             if let currentNode = currentNode {
-                nodesDict.updateValue(currentNode, forKey: direction.hashcode)
+                let connectionRoutes = flattenRoutes.filter { $0.originCode == stationCode }
+                let connectionNodes = getNotesFromRoutes(connectionRoutes, inDict: allNodes)
+                currentNode.addConnections(to: connectionNodes, bidirectional: false)
+
+                let currentNodeIndex = allNodes.firstIndex(of: currentNode)
+                if let currentNodeIndex = currentNodeIndex {
+                    allNodes[currentNodeIndex] = currentNode
+                }
             }
         }
 
-
-        let nodes = nodesDict.map { $0.1 }
         let mapGraph = GKGraph()
-        mapGraph.add(nodes)
+        mapGraph.add(allNodes)
 
-        let originDirections = flattenDirections.filter { $0.originCode == origin }
-        let detinationDirections = flattenDirections.filter { $0.destinationCode == destination }
-
-        let origonNodes = getNotesFromRoutes(originDirections, inDict: nodesDict)
-        let destinationNodes = getNotesFromRoutes(detinationDirections, inDict: nodesDict)
-
-        let fromAndToNodesTuple = zip(origonNodes, destinationNodes).map { ($0, $1) }
-
-        var foundPaths: [[GKGraphNode]] = [[GKGraphNode]]()
-        for tuple in fromAndToNodesTuple {
-            foundPaths.append(mapGraph.findPath(from: tuple.0, to: tuple.1))
-        }
-
-        var routes: [[TrainRoute]] = [[TrainRoute]]()
-        for path in foundPaths {
-            routes.append(getRoutesFromNodes(path, inDict: nodesDict, andRoutes: flattenDirections))
-        }
-
-        // TODO: extend to determine the best route from the `routes`. Currently uses the first one which is not sorted in anyway.
+        let originNode = allNodes.first { $0.code == originCode }
+        let destinationNode = allNodes.first { $0.code == destinationCode }
         var foundRoute: [TrainRoute] = []
-        if let firstRoute = routes.first {
-            foundRoute = firstRoute
+        if let originNode = originNode, let destinationNode = destinationNode {
+            let path = mapGraph.findPath(from: originNode, to: destinationNode)
+            let pathStationNodes =  path.map { $0 as! StationGraphNode }
+            foundRoute = getRoutesFromNodes(pathStationNodes, inSourceNodes: allNodes, andRoutes: flattenRoutes)
         }
 
-        return Route(directions: foundRoute, isDirect: false, origin: origin, destination: destination)
+        return Route(directions: foundRoute, isDirect: false, origin: originCode, destination: destinationCode)
     }
 
     private func findRouteFor(origin: String, andDestination destiantion: String, withTrainRoutes trainRoutes: [[TrainRoute]], andDirectRoute directRoute: Bool) -> Route {
@@ -208,26 +201,28 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
 
             return tripRoute
         } else {
-            tripRoute = findRouteWithGraphFor(directions: trainRoutes, andOrigin: origin, andDestination: destiantion)
+            tripRoute = findRouteWithGraphFor(routes: trainRoutes, andOrigin: origin, andDestination: destiantion)
         }
-
-        // TODO: use A Start algorothum
 
         return tripRoute
     }
 
     func findDirectionsFrom(_ origin: String, destination: String, forDirectRoute directRoute: Bool, _ completion: @escaping (RailwaysResponse<Route>) -> Void) {
-        getStationData(withStaticString: origin) { stationResponse in
+        getStationData(withName: origin) { stationResponse in
             let tempTrainRoute: Route = Route(directions: [], isDirect: false, origin: origin, destination: destination)
             let response = RailwaysResponse<Route>(data: tempTrainRoute)
 
-            guard let originStationCode = stationResponse.data?.first?.StationCode else {
+            guard let originStationCode = stationResponse.data?.first?.Stationcode else {
+                let error = RaiwayResponseError(title: "Error getting station data", description: "Station data for \(origin) cannot be found.", code: 1)
+                response.error = error
                 completion(response)
                 return
             }
 
-            self.getStationData(withStaticString: destination) { stationResponse in
-                guard let destinationStationCode = stationResponse.data?.first?.StationCode else {
+            self.getStationData(withName: destination) { stationResponse in
+                guard let destinationStationCode = stationResponse.data?.first?.Stationcode else {
+                    let error = RaiwayResponseError(title: "Error getting station data", description: "Station data for \(destination) cannot be found.", code: 1)
+                    response.error = error
                     completion(response)
                     return
                 }

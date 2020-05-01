@@ -48,13 +48,13 @@ class StationsViewController: UIViewController, UITableViewDelegate, UITableView
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setupView()
-        reloadData()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        setupView()
+        reloadData()
         setupBidnings()
     }
 
@@ -99,7 +99,7 @@ class StationsViewController: UIViewController, UITableViewDelegate, UITableView
         updateStatusWith(status: .loading)
         dataService.getAllStationsData() { data in
             if let stations = data.data {
-                self.viewModel.stations = stations
+                self.viewModel.stations = stations.sorted { $0.StationDesc.lowercased() < $1.StationDesc.lowercased() }
             }
             
             if data.status != .failure {
@@ -126,7 +126,7 @@ extension StationsViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: StationCell.reuseIdentifier, for: indexPath)
         let stationObj = viewModel.stations[indexPath.row]
 
-        cell.textLabel?.text = stationObj.StationDesc
+        cell.textLabel?.text = "'\(stationObj.StationCode)' \(stationObj.StationDesc)"
         
         return cell
     }
