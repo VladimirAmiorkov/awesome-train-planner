@@ -22,11 +22,16 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     @IBOutlet weak var fromTextField: UITextField!
     @IBOutlet weak var toTextField: UITextField!
     @IBOutlet weak var resultsList: UITableView!
+    @IBOutlet weak var directTripSwitch: UISwitch!
 
     private var statusIndicatorSubscriber: AnyCancellable?
     private var listSubscriber: AnyCancellable?
     private var fromSubscriber: AnyCancellable?
     private var toSubscriber: AnyCancellable?
+    private var directTripSubscriber: AnyCancellable?
+
+    private var lastSearchOrigin: String = ""
+    private var lastSearchDestination: String = ""
     
     let viewModel: MainViewModel
     let dataService: DataService
@@ -66,6 +71,10 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         searchForDirections()
     }
 
+    @IBAction func directTripSwitchToggle(_ sender: UISwitch) {
+        viewModel.directRoutesEnabled = sender.isOn
+    }
+
     @objc func dismissKeyboard() {
         view.endEditing(true)
     }
@@ -94,13 +103,18 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     // MARK: Private functions
 
     private func searchForDirections() {
-        guard let from = viewModel.origin, let to = viewModel.destination else {
+        // TODO: Remove
+        viewModel.destination = "Seapoint"
+        guard let origin = viewModel.origin, let destination = viewModel.destination else {
             return
         }
 
+        lastSearchOrigin = origin
+        lastSearchDestination = destination
+
         updateStatusWith(status: .loading)
 
-        dataService.findDirectionsFrom(from, destination: to) { data in
+        dataService.findDirectionsFrom(origin, destination: destination, forDirectRoute: viewModel.directRoutesEnabled) { data in
             switch data.status {
             case .failure:
                 self.updateStatusWith(status: .failure)
@@ -119,10 +133,10 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         }
     }
 
-    private func getDirectDirection(fromDirections directions: [Direction]) -> Direction? {
+    private func getDirectDirection(fromDirections directions: [TrainRoute]) -> TrainRoute? {
         guard let firstDirection = directions.first, let lastDirection = directions.last else { return nil }
 
-        return Direction(from: firstDirection.from, to: lastDirection.to, trainCode: firstDirection.trainCode, time: firstDirection.time, isDirect: true)
+        return TrainRoute(originCode: firstDirection.originCode, destinationCode: lastDirection.destinationCode, originName: lastSearchOrigin, destinationName: lastSearchDestination, trainCode: firstDirection.trainCode, time: firstDirection.time, isDirect: true)
     }
 
     private func setupBidnings() {
@@ -149,6 +163,8 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         listSubscriber = viewModel.$directions.receive(on: DispatchQueue.main).sink { receivedValue in
             self.resultsList.reloadData()
         }
+
+        directTripSubscriber = viewModel.$directRoutesEnabled.receive(on: DispatchQueue.main).assign(to: \.isOn, on: directTripSwitch)
     }
 
     private func updateStatusWith(status: LoadingStatus) {
@@ -172,7 +188,7 @@ extension MainViewController {
         let directionObj = viewModel.directions[indexPath.row]
 
         let textString = "Train: " + directionObj.trainCode + " at: " + directionObj.time
-        let detailText =  "From: " + directionObj.from + " to: " + directionObj.to
+        let detailText =  "From: " + directionObj.originName + " to: " + directionObj.destinationName
         var myAttribute = [NSAttributedString.Key.foregroundColor: UIColor.systemOrange]
         if directionObj.isDirect {
             myAttribute = [NSAttributedString.Key.foregroundColor: UIColor.systemGreen]

@@ -1,5 +1,5 @@
 //
-//  Direction.swift
+//  TrainRoute.swift
 //  awesome-train-planner
 //
 //  Created by Vladimir Amiorkov on 26.04.20.
@@ -8,15 +8,17 @@
 
 import Foundation
 
-struct Direction {
-    let from: String
-    let to: String
+struct TrainRoute {
+    let originCode: String
+    let destinationCode: String
+    let originName: String
+    let destinationName: String
     let trainCode: String
     let time: String
     let isDirect: Bool
     var hashcode: String {
         get {
-            return trainCode + from + to
+            return trainCode + originCode + destinationCode
         }
     }
 }

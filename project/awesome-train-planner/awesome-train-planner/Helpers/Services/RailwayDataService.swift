@@ -21,10 +21,11 @@ protocol DataService {
     func getCurrentTrains(withType type: IrishRailAPI.TrainType, _ completion: @escaping (RailwaysResponse<[TrainPosition]>) -> Void)
     func getTrainMovements(byId id: String, andDate date: String, _ completion: @escaping (RailwaysResponse<[TrainMovement]>) -> Void)
 
-    func findDirectionsFrom(_ from: String, _ completion: @escaping (RailwaysResponse<[[Direction]]>) -> Void)
-    func findDirectionsFrom(_ from: String, destination: String, _ completion: @escaping (RailwaysResponse<Route>) -> Void)
+    func findTrainRoutesFrom(_ from: String, _ completion: @escaping (RailwaysResponse<[[TrainRoute]]>) -> Void)
+    func findDirectionsFrom(_ origin: String, destination: String, forDirectRoute directRoute: Bool, _ completion: @escaping (RailwaysResponse<Route>) -> Void)
 
     func getAllTrainsMovementsFrom(_ from: String, _ completion: @escaping (RailwaysResponse<[[TrainMovement]]>) -> Void)
+    
 }
 
 class RailwayDataService: NSObject, DataService, XMLParserDelegate {
@@ -94,12 +95,12 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
 
     // TODO: rename all Direction to Route
 
-    private func isRoute(_ route: Direction, forDestination destination: String) -> Bool {
+    private func isRoute(_ route: TrainRoute, forDestination destination: String) -> Bool {
 //        return route.to == "Howth" // TODO: for testing with direct route, replace with `destination`
-        return route.to == destination
+        return route.destinationCode == destination
     }
 
-    private func getNotesFromRoutes(_ routes: [Direction], inDict dict: [String: GKGraphNode]) -> [GKGraphNode] {
+    private func getNotesFromRoutes(_ routes: [TrainRoute], inDict dict: [String: GKGraphNode]) -> [GKGraphNode] {
         var routeNodes = [GKGraphNode]()
         for route in routes {
             if let routeNode = dict[route.hashcode] {
@@ -110,8 +111,8 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
         return routeNodes
     }
 
-    private func getRoutesFromNodes(_ nodes: [GKGraphNode], inDict dict: [String: GKGraphNode], andRoutes routes: [Direction]) -> [Direction] {
-        var routeNodes = [Direction]()
+    private func getRoutesFromNodes(_ nodes: [GKGraphNode], inDict dict: [String: GKGraphNode], andRoutes routes: [TrainRoute]) -> [TrainRoute] {
+        var routeNodes = [TrainRoute]()
         for node in nodes {
             let nodeHashcode: String = (dict as NSDictionary).allKeys(for: node).first as! String
             let route = routes.first { $0.hashcode == nodeHashcode }
@@ -123,7 +124,7 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
         return routeNodes
     }
 
-    func findRouteWithGraphFor(directions: [[Direction]], andOrigin origin: String, andDestination destination: String) -> Route {
+    func findRouteWithGraphFor(directions: [[TrainRoute]], andOrigin origin: String, andDestination destination: String) -> Route {
         let flattenDirections = directions.flatMap { $0 }
 
         var nodesDict: [String: GKGraphNode] = [String: GKGraphNode]()
@@ -132,7 +133,7 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
         }
 
         for direction in flattenDirections {
-            let connectionDirections = flattenDirections.filter { $0.from == direction.to }
+            let connectionDirections = flattenDirections.filter { $0.originCode == direction.destinationCode }
 
             let connectionNodes = getNotesFromRoutes(connectionDirections, inDict: nodesDict)
             let currentNode = nodesDict[direction.hashcode]
@@ -147,8 +148,8 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
         let mapGraph = GKGraph()
         mapGraph.add(nodes)
 
-        let originDirections = flattenDirections.filter { $0.from == origin }
-        let detinationDirections = flattenDirections.filter { $0.to == destination }
+        let originDirections = flattenDirections.filter { $0.originCode == origin }
+        let detinationDirections = flattenDirections.filter { $0.destinationCode == destination }
 
         let origonNodes = getNotesFromRoutes(originDirections, inDict: nodesDict)
         let destinationNodes = getNotesFromRoutes(detinationDirections, inDict: nodesDict)
@@ -160,13 +161,13 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
             foundPaths.append(mapGraph.findPath(from: tuple.0, to: tuple.1))
         }
 
-        var routes: [[Direction]] = [[Direction]]()
+        var routes: [[TrainRoute]] = [[TrainRoute]]()
         for path in foundPaths {
             routes.append(getRoutesFromNodes(path, inDict: nodesDict, andRoutes: flattenDirections))
         }
 
         // TODO: extend to determine the best route from the `routes`. Currently uses the first one which is not sorted in anyway.
-        var foundRoute: [Direction] = []
+        var foundRoute: [TrainRoute] = []
         if let firstRoute = routes.first {
             foundRoute = firstRoute
         }
@@ -174,40 +175,40 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
         return Route(directions: foundRoute, isDirect: false, origin: origin, destination: destination)
     }
 
-    private func findRouteFor(origin: String, andDestination destiantion: String, withDirections directions: [[Direction]]) -> Route {
-        var foundDirection = false
+    private func findRouteFor(origin: String, andDestination destiantion: String, withTrainRoutes trainRoutes: [[TrainRoute]], andDirectRoute directRoute: Bool) -> Route {
         var tripRoute = Route(directions: [], isDirect: false, origin: origin, destination: destiantion)
 
         // Lookup in direct routes
-        var currentDirections = [Direction]()
+        var currentTrainRoutes = [TrainRoute]()
+        var foundTrainRoute = false
         var isDirectRoute = false
-//        for innerDirection in directions {
-//            for directDirection in innerDirection {
-//                if directDirection.from == origin || currentDirections.count != 0 {
-//                    currentDirections.append(directDirection)
-//                }
-//
-//                if isRoute(directDirection, forDestination: destiantion) && currentDirections.count != 0 {
-//                    foundDirection = true
-//                    isDirectRoute = true
-//                    break
-//                }
-//            }
-//
-//            if foundDirection {
-//                break
-//            } else {
-//                currentDirections = [Direction]()
-//            }
-//        }
+        for innerTrainRoute in trainRoutes {
+            for directDirection in innerTrainRoute {
+                if directDirection.originCode == origin || currentTrainRoutes.count != 0 {
+                    currentTrainRoutes.append(directDirection)
+                }
 
-        if foundDirection {
-            tripRoute.directions = currentDirections
+                if isRoute(directDirection, forDestination: destiantion) && currentTrainRoutes.count != 0 {
+                    foundTrainRoute = true
+                    isDirectRoute = true
+                    break
+                }
+            }
+
+            if foundTrainRoute {
+                break
+            } else {
+                currentTrainRoutes = [TrainRoute]()
+            }
+        }
+
+        if foundTrainRoute && directRoute {
+            tripRoute.directions = currentTrainRoutes
             tripRoute.isDirect = isDirectRoute
 
             return tripRoute
         } else {
-            tripRoute = findRouteWithGraphFor(directions: directions, andOrigin: origin, andDestination: destiantion)
+            tripRoute = findRouteWithGraphFor(directions: trainRoutes, andOrigin: origin, andDestination: destiantion)
         }
 
         // TODO: use A Start algorothum
@@ -215,7 +216,7 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
         return tripRoute
     }
 
-    func findDirectionsFrom(_ origin: String, destination: String, _ completion: @escaping (RailwaysResponse<Route>) -> Void) {
+    func findDirectionsFrom(_ origin: String, destination: String, forDirectRoute directRoute: Bool, _ completion: @escaping (RailwaysResponse<Route>) -> Void) {
         getStationData(withStaticString: origin) { stationResponse in
             let tempTrainRoute: Route = Route(directions: [], isDirect: false, origin: origin, destination: destination)
             let response = RailwaysResponse<Route>(data: tempTrainRoute)
@@ -231,16 +232,16 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
                     return
                 }
 
-                self.findDirectionsFrom(originStationCode) { receivedData in
+                self.findTrainRoutesFrom(originStationCode) { receivedData in
 
-                    guard let trainDirections = receivedData.data else {
+                    guard let trainRoutes = receivedData.data else {
                         response.data = nil
                         response.error = receivedData.error
                         completion(response)
                         return
                     }
 
-                    let data = self.findRouteFor(origin: originStationCode, andDestination: destinationStationCode, withDirections: trainDirections)
+                    let data = self.findRouteFor(origin: originStationCode, andDestination: destinationStationCode, withTrainRoutes: trainRoutes, andDirectRoute: directRoute)
                     let trainRoute: Route = Route(directions: data.directions, isDirect: data.isDirect, origin: origin, destination: destination)
                     response.data = trainRoute
                     response.error = nil
@@ -250,10 +251,10 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
         }
     }
 
-    func findDirectionsFrom(_ from: String, _ completion: @escaping (RailwaysResponse<[[Direction]]>) -> Void) {
+    func findTrainRoutesFrom(_ from: String, _ completion: @escaping (RailwaysResponse<[[TrainRoute]]>) -> Void) {
         getAllTrainsMovementsFrom(from) { receivedData in
-            let trainsMovements = [[Direction]]()
-            let response = RailwaysResponse<[[Direction]]>(data: trainsMovements)
+            let trainsMovements = [[TrainRoute]]()
+            let response = RailwaysResponse<[[TrainRoute]]>(data: trainsMovements)
             guard let trains = receivedData.data else {
                 response.data = nil
                 response.error = receivedData.error
@@ -261,9 +262,9 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
                 return
             }
 
-            var trainDirections = [[Direction]]()
+            var trainDirections = [[TrainRoute]]()
             for trainMovements in trains {
-                var currentTrainDirections = [Direction]()
+                var currentTrainDirections = [TrainRoute]()
                 for (index, movment) in trainMovements.enumerated() {
                     var nextMovement: TrainMovement? = nil
                     let nextIndex = index + 1
@@ -271,7 +272,7 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
                         nextMovement = trainMovements[nextIndex]
                     }
 
-                    let direction = Direction(from: movment.LocationCode , to: nextMovement?.LocationCode ?? movment.TrainDestination, trainCode: movment.TrainCode, time: movment.ExpectedArrival, isDirect: false)
+                    let direction = TrainRoute(originCode: movment.LocationCode , destinationCode: nextMovement?.LocationCode ?? movment.TrainDestination, originName: movment.LocationFullName, destinationName: nextMovement?.LocationFullName ?? movment.TrainDestination, trainCode: movment.TrainCode, time: movment.ExpectedArrival, isDirect: false)
                     currentTrainDirections.append(direction)
                 }
 
