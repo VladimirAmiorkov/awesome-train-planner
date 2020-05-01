@@ -45,6 +45,7 @@
 		88732D37245AE42600627A1E /* TrainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88732D36245AE42600627A1E /* TrainViewModel.swift */; };
 		88732D3A245AE5FC00627A1E /* TrainsRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88732D39245AE5FC00627A1E /* TrainsRouter.swift */; };
 		88732D3E245B12F500627A1E /* TrainTrip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88732D3D245B12F500627A1E /* TrainTrip.swift */; };
+		88732D40245C1B2400627A1E /* Route.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88732D3F245C1B2400627A1E /* Route.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -109,6 +110,7 @@
 		88732D36245AE42600627A1E /* TrainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainViewModel.swift; sourceTree = "<group>"; };
 		88732D39245AE5FC00627A1E /* TrainsRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainsRouter.swift; sourceTree = "<group>"; };
 		88732D3D245B12F500627A1E /* TrainTrip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainTrip.swift; sourceTree = "<group>"; };
+		88732D3F245C1B2400627A1E /* Route.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Route.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -149,6 +151,7 @@
 			children = (
 				881FD0CD2455B20D00C9E3E5 /* RailwayDataService.swift */,
 				885CB92724580D820077C67C /* RailwaysResponse.swift */,
+				88732D3F245C1B2400627A1E /* Route.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -596,6 +599,7 @@
 				88732D37245AE42600627A1E /* TrainViewModel.swift in Sources */,
 				8851BF7524546EB20091C925 /* MainViewController.swift in Sources */,
 				885CB92324570A8E0077C67C /* RailwaysDataXMLParserDelegate.swift in Sources */,
+				88732D40245C1B2400627A1E /* Route.swift in Sources */,
 				88732D2A245AA68500627A1E /* StationViewController.swift in Sources */,
 				8851BF7124546EB20091C925 /* AppDelegate.swift in Sources */,
 				885CB92A245819FE0077C67C /* StationFilter.swift in Sources */,

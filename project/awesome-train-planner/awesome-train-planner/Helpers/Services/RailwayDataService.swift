@@ -13,12 +13,15 @@ protocol DataService {
     func getAllStationsData(_ completion: @escaping (RailwaysResponse<[Station]>) -> Void) -> Void
     func getAllStationsData(withType type: IrishRailAPI.StationType, _ completion: @escaping (RailwaysResponse<[Station]>) -> Void)
     func getStationData(withName name: String, _ completion: @escaping (RailwaysResponse<[StationData]>) -> Void)
-    func getStationData(withCode code: String, _ completion: @escaping (RailwaysResponse<StationData>) -> Void)
+    func getStationData(withCode code: String, _ completion: @escaping (RailwaysResponse<[StationData]>) -> Void)
     func getStationData(withStaticString query: String, _ completion: @escaping (RailwaysResponse<[StationFilter]>) -> Void)
     
     func getCurrentTrains(_ completion: @escaping (RailwaysResponse<[TrainPosition]>) -> Void) -> Void
     func getCurrentTrains(withType type: IrishRailAPI.TrainType, _ completion: @escaping (RailwaysResponse<[TrainPosition]>) -> Void)
     func getTrainMovements(byId id: String, andDate date: String, _ completion: @escaping (RailwaysResponse<[TrainMovement]>) -> Void)
+
+    func findDirectionsFrom(_ from: String, _ completion: @escaping (RailwaysResponse<[[Direction]]>) -> Void)
+    func findDirectionsFrom(_ from: String, destination: String, _ completion: @escaping (RailwaysResponse<Route>) -> Void)
 
     func getAllTrainsMovementsFrom(_ from: String, _ completion: @escaping (RailwaysResponse<[[TrainMovement]]>) -> Void)
 }
@@ -54,10 +57,10 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
         getDataArrayWith(url: url, andParserDelegate: self.stationDataParserDelegate, completion: completion)
     }
     
-    func getStationData(withCode code: String, _ completion: @escaping (RailwaysResponse<StationData>) -> Void) {
+    func getStationData(withCode code: String, _ completion: @escaping (RailwaysResponse<[StationData]>) -> Void) {
         guard let url = api.getStationData(withCode: code) else { return }
         
-        getDataObjectWith(url: url, andParserDelegate: self.stationDataParserDelegate, completion: completion)
+        getDataArrayWith(url: url, andParserDelegate: self.stationDataParserDelegate, completion: completion)
     }
     
     func getStationData(withStaticString query: String, _ completion: @escaping (RailwaysResponse<[StationFilter]>) -> Void) {
@@ -88,15 +91,126 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
 
     // MARK: Directions
 
-    private func findDirectionsFrom(_ from: String, to: String) {
+    // TODO: rename all Direction to Route
 
+    private func isRoute(_ route: Direction, forDestination destination: String) -> Bool {
+//        return route.to == "Howth" // TODO: for testing with direct route, replace with `destination`
+        return route.to == destination
+    }
+
+    private func findRouteFrom(_ from: String, to: String, withDirections directions: [[Direction]]) -> Route {
+        var trainsMovements: [Direction] = [Direction]()
+        var tempDirections = [[Direction]]()
+        var foundDirection = false
+        var tripRoute = Route(directions: [], isDirect: false, origin: from, destination: to)
+
+        // Lookup in direct routes
+        var currentDirections = [Direction]()
+        var isDirectRoute = false
+        for (index, innerDirection) in directions.enumerated() {
+            for directDirection in innerDirection {
+                if directDirection.from == from || currentDirections.count != 0 {
+                    currentDirections.append(directDirection)
+                }
+
+                if isRoute(directDirection, forDestination: to) && currentDirections.count != 0 {
+                    foundDirection = true
+                    isDirectRoute = true
+                    break
+                }
+            }
+
+            if foundDirection {
+                break
+            } else {
+                currentDirections = [Direction]()
+            }
+        }
+
+        if foundDirection {
+            tripRoute.directions = currentDirections
+            tripRoute.isDirect = isDirectRoute
+
+            return tripRoute
+        }
+
+
+        return tripRoute
+    }
+
+    func findDirectionsFrom(_ origin: String, destination: String, _ completion: @escaping (RailwaysResponse<Route>) -> Void) {
+        getStationData(withStaticString: origin) { stationResponse in
+            let tempTrainRoute: Route = Route(directions: [], isDirect: false, origin: origin, destination: destination)
+            let response = RailwaysResponse<Route>(data: tempTrainRoute)
+
+            guard let originStationCode = stationResponse.data?.first?.StationCode else {
+                completion(response)
+                return
+            }
+
+            self.getStationData(withStaticString: destination) { stationResponse in
+                guard let destinationStationCode = stationResponse.data?.first?.StationCode else {
+                    completion(response)
+                    return
+                }
+
+                self.findDirectionsFrom(originStationCode) { receivedData in
+
+                    guard let trainDirections = receivedData.data else {
+                        response.data = nil
+                        response.error = receivedData.error
+                        completion(response)
+                        return
+                    }
+
+                    let data = self.findRouteFrom(originStationCode, to: destinationStationCode, withDirections: trainDirections)
+                    let trainRoute: Route = Route(directions: data.directions, isDirect: data.isDirect, origin: origin, destination: destination)
+                    response.data = trainRoute
+                    response.error = nil
+                    completion(response)
+                }
+            }
+        }
+    }
+
+    func findDirectionsFrom(_ from: String, _ completion: @escaping (RailwaysResponse<[[Direction]]>) -> Void) {
+        getAllTrainsMovementsFrom(from) { receivedData in
+            let trainsMovements = [[Direction]]()
+            let response = RailwaysResponse<[[Direction]]>(data: trainsMovements)
+            guard let trains = receivedData.data else {
+                response.data = nil
+                response.error = receivedData.error
+                completion(response)
+                return
+            }
+
+            var trainDirections = [[Direction]]()
+            for trainMovements in trains {
+                var currentTrainDirections = [Direction]()
+                for (index, movment) in trainMovements.enumerated() {
+                    var nextMovement: TrainMovement? = nil
+                    let nextIndex = index + 1
+                    if nextIndex < trainMovements.count {
+                        nextMovement = trainMovements[nextIndex]
+                    }
+
+                    let direction = Direction(from: movment.LocationCode , to: nextMovement?.LocationCode ?? movment.TrainDestination, trainCode: movment.TrainCode, time: movment.ExpectedArrival, isDirect: false)
+                    currentTrainDirections.append(direction)
+                }
+
+                trainDirections.append(currentTrainDirections)
+            }
+
+            response.data = trainDirections
+            response.error = nil
+            completion(response)
+        }
     }
 
     func getAllTrainsMovementsFrom(_ from: String, _ completion: @escaping (RailwaysResponse<[[TrainMovement]]>) -> Void) {
-        let directions = [[TrainMovement]]()
-        let response = RailwaysResponse<[[TrainMovement]]>(data: directions)
-
-        getStationData(withName: from) { receivedData in
+        getStationData(withCode: from) { receivedData in
+            let trainsMovements = [[TrainMovement]]()
+            let response = RailwaysResponse<[[TrainMovement]]>(data: trainsMovements)
             guard let data = receivedData.data else {
                 response.data = nil
                 response.error = receivedData.error

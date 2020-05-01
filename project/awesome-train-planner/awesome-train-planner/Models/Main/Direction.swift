@@ -12,5 +12,6 @@ struct Direction {
     let from: String
     let to: String
     let trainCode: String
-    let time: Date
+    let time: String
+    let isDirect: Bool
 }

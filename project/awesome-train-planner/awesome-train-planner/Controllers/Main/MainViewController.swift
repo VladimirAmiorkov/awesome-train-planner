@@ -16,7 +16,7 @@ protocol MainViewControllerProtocol {
     init(viewModel: MainViewModel, andDataService dataService: DataService)
 }
 
-class MainViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, MainViewControllerProtocol {
+class MainViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, MainViewControllerProtocol {
 
     @IBOutlet weak var statusIndicator: UIActivityIndicatorView!
     @IBOutlet weak var fromTextField: UITextField!
@@ -49,74 +49,7 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        guard let from = viewModel.from, let to = viewModel.to else {
-            return
-        }
-        
-        dataService.getAllTrainsMovementsFrom(from) { data in
-
-        }
-
-        
-//        dataService.getAllStationsData() { data in
-//            if let stations = data.data {
-//                self.viewModel.stations = stations
-//            }
-//
-//            self.updateStatusWith(status: .loaded)
-//        }
-//
-//        dataService.getAllStationsData(withType: IrishRailAPI.StationType.mainline) { data in
-//            if let stations = data.data {
-//                self.viewModel.stations = stations
-//            }
-//
-//            self.updateStatusWith(status: .loaded)
-//        }
-//
-//        dataService.getStationData(withName: "Cobh") { data in
-//            self.updateStatusWith(status: .loaded)
-//        }
-//
-//        dataService.getStationData(withCode: "BFSTC") { data in
-//            self.updateStatusWith(status: .loaded)
-//        }
-        
-//        dataService.getStationData(withStaticString: "br") { data in
-//            switch data.status {
-//            case .failure:
-//                self.updateStatusWith(status: .error)
-//            case .successs:
-//                self.updateStatusWith(status: .loaded)
-//            }
-//        }
-        
-//        dataService.getCurrentTrains() { data in
-//            switch data.status {
-//            case .failure:
-//                self.updateStatusWith(status: .error)
-//            case .successs:
-//                self.updateStatusWith(status: .loaded)
-//            }
-//        }
-        
-//        dataService.getCurrentTrains(withType: IrishRailAPI.TrainType.dart) { data in
-//            switch data.status {
-//            case .failure:
-//                self.updateStatusWith(status: .error)
-//            case .successs:
-//                self.updateStatusWith(status: .loaded)
-//            }
-//        }
-        
-//        dataService.getTrainMovements(byId: "E976", andDate: "26 apr 20") { data in
-//            switch data.status {
-//            case .failure:
-//                self.updateStatusWith(status: .error)
-//            case .successs:
-//                self.updateStatusWith(status: .loaded)
-//            }
-//        }
+        searchForDirections()
     }
     
     override func viewDidLoad() {
@@ -129,7 +62,8 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     // MARK: IBActions
 
     @IBAction func searchTap(_ sender: UIButton) {
-        // TODO: get new directions from `dataService`
+        dismissKeyboard()
+        searchForDirections()
     }
 
     @objc func dismissKeyboard() {
@@ -139,8 +73,58 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
 
     private func setupView() {
         resultsList.register(TrainCardCell.self, forCellReuseIdentifier: TrainCardCell.reuseIdentifier)
-        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.dismissKeyboard))
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         view.addGestureRecognizer(tap)
+
+        fromTextField.addTarget(self, action: #selector(fromTextFieldDidChange(_:)), for: .editingChanged)
+        fromTextField.delegate = self
+
+        toTextField.addTarget(self, action: #selector(toTextFieldDidChange(_:)), for: .editingChanged)
+        toTextField.delegate = self
+    }
+
+    // MARK: UI Targets
+
+    @objc private func fromTextFieldDidChange(_ textField: UITextField) {
+        viewModel.origin = textField.text
+    }
+
+    @objc private func toTextFieldDidChange(_ textField: UITextField) {
+        viewModel.destination = textField.text
+    }
+
+    // MARK: Private functions
+
+    private func searchForDirections() {
+        guard let from = viewModel.origin, let to = viewModel.destination else {
+            return
+        }
+
+        updateStatusWith(status: .loading)
+
+        dataService.findDirectionsFrom(from, destination: to) { data in
+            switch data.status {
+            case .failure:
+                self.updateStatusWith(status: .failure)
+            case .successs:
+                self.updateStatusWith(status: .loaded)
+                if let route = data.data {
+                    if route.isDirect {
+                        if let directRoute = self.getDirectDirection(fromDirections: route.directions) {
+                            self.viewModel.directions = [directRoute]
+                        }
+                    } else {
+                        self.viewModel.directions = route.directions
+                    }
+                }
+            }
+        }
+    }
+
+    private func getDirectDirection(fromDirections directions: [Direction]) -> Direction? {
+        guard let firstDirection = directions.first, let lastDirection = directions.last else { return nil }
+
+        return Direction(from: firstDirection.from, to: lastDirection.to, trainCode: firstDirection.trainCode, time: firstDirection.time, isDirect: true)
     }
 
     private func setupBidnings() {
@@ -160,11 +144,11 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
             }
         })
         
-        fromSubscriber = viewModel.$from.receive(on: DispatchQueue.main).assign(to: \.text, on: fromTextField)
+        fromSubscriber = viewModel.$origin.receive(on: DispatchQueue.main).assign(to: \.text, on: fromTextField)
+
+        toSubscriber = viewModel.$destination.receive(on: DispatchQueue.main).assign(to: \.text, on: toTextField)
         
-        toSubscriber = viewModel.$to.receive(on: DispatchQueue.main).assign(to: \.text, on: toTextField)
-        
-        listSubscriber = viewModel.$stations.receive(on: DispatchQueue.main).sink { receivedValue in
+        listSubscriber = viewModel.$directions.receive(on: DispatchQueue.main).sink { receivedValue in
             self.resultsList.reloadData()
         }
     }
@@ -172,22 +156,41 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     private func updateStatusWith(status: LoadingStatus) {
         self.viewModel.status = status
     }
-
 }
 
 // MARK: UITableViewDataSource
 extension MainViewController {
-    
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        viewModel.stations.count
+        viewModel.directions.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: TrainCardCell.reuseIdentifier, for: indexPath)
-        cell.backgroundColor = .red
+        let directionObj = viewModel.directions[indexPath.row]
+
+        let myString = "Train: " + directionObj.trainCode + " at: " + directionObj.time + " from: " + directionObj.from
+        var myAttribute = [NSAttributedString.Key.foregroundColor: UIColor.systemOrange]
+        if directionObj.isDirect {
+            myAttribute = [NSAttributedString.Key.foregroundColor: UIColor.systemGreen]
+        }
+
+        let myAttrString = NSAttributedString(string: myString, attributes: myAttribute)
+
+        cell.textLabel?.attributedText = myAttrString
         
         return cell
     }
     
 }
 
+// MARK: UITextFieldDelegate
+extension MainViewController {
+    
+    func textFieldShouldReturn( _ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        searchForDirections()
+
+        return false
+    }
+}
