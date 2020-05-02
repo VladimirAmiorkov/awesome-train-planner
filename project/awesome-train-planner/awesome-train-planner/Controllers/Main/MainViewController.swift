@@ -172,16 +172,14 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     private func updateStatusWith(status: LoadingStatus, andMessage message: String) {
         viewModel.status = status
         if status == .failure {
-
-            UIView.animate(withDuration: 0.5) { [weak self] in
-                DispatchQueue.main.async { [unowned self] in
+            DispatchQueue.main.async { [unowned self] in
+                UIView.animate(withDuration: 0.5) { [weak self] in
                     self?.updateStatusLabelWith(color: .red, andMessage: message, andIsHidden: false)
                 }
             }
-
         } else {
-            UIView.animate(withDuration: 0.5) { [weak self] in
-                DispatchQueue.main.async { [unowned self] in
+            DispatchQueue.main.async { [unowned self] in
+                UIView.animate(withDuration: 0.5) { [weak self] in
                     self?.updateStatusLabelWith(color: .label, andMessage: message, andIsHidden: true)
                 }
             }
@@ -192,7 +190,7 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
 
     @objc private func updateStatusLabelWith(color: UIColor, andMessage message: String, andIsHidden isHidden: Bool) {
         statusLabel.textColor = color
-//        statusLabel.isHidden = isHidden
+        statusLabel.isHidden = isHidden
         statusLabel.text = message
     }
 }
