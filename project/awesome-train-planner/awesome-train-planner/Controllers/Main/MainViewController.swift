@@ -90,7 +90,7 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         toTextField.addTarget(self, action: #selector(toTextFieldDidChange(_:)), for: .editingChanged)
         toTextField.delegate = self
 
-//        statusLabel.isHidden = true
+        statusLabel.isHidden = true
     }
 
     // MARK: UI Targets
@@ -115,7 +115,7 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
 
         updateStatusWith(status: .loading, andMessage:  "Fetching data ...")
 
-        dataService.findDirectionsFrom(origin, destination: destination, forDirectRoute: viewModel.directRoutesEnabled) { data in
+        dataService.findDirectionsFrom(origin, andDestination: destination, forDirectRoute: viewModel.directRoutesEnabled) { data in
             switch data.status {
             case .failure:
                 self.updateStatusWith(status: .failure, andMessage: data.error?.localizedDescription ?? "Error fetching data ...")
@@ -128,6 +128,9 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
                         }
                     } else {
                         self.viewModel.directions = route.directions
+                        if self.viewModel.directions.count == 0 {
+                            self.updateStatusLabelWith(color: .orange, andMessage: "No trips from \(origin) to \(destination) found", andIsHidden: false)
+                        }
                     }
                 }
             }
@@ -172,26 +175,28 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     private func updateStatusWith(status: LoadingStatus, andMessage message: String) {
         viewModel.status = status
         if status == .failure {
-            DispatchQueue.main.async { [unowned self] in
-                UIView.animate(withDuration: 0.5) { [weak self] in
-                    self?.updateStatusLabelWith(color: .red, andMessage: message, andIsHidden: false)
-                }
-            }
+            self.updateStatusLabelWith(color: .red, andMessage: message, andIsHidden: false)
         } else {
-            DispatchQueue.main.async { [unowned self] in
-                UIView.animate(withDuration: 0.5) { [weak self] in
-                    self?.updateStatusLabelWith(color: .label, andMessage: message, andIsHidden: true)
-                }
-            }
+            self.updateStatusLabelWith(color: .label, andMessage: message, andIsHidden: true)
         }
     }
 
 
-
+    /// Updates the `statis` label's text and coor and hides or shows it using an animation.
+    /// - Parameters:
+    ///   - color: the color of the text
+    ///   - message: the text of the label
+    ///   - isHidden: determines of the label is visible or not
+    ///
+    /// Note: Safe to be called from background threads
     @objc private func updateStatusLabelWith(color: UIColor, andMessage message: String, andIsHidden isHidden: Bool) {
-        statusLabel.textColor = color
-        statusLabel.isHidden = isHidden
-        statusLabel.text = message
+        DispatchQueue.main.async { [unowned self] in
+            UIView.animate(withDuration: 0.5) { [weak self] in
+                self?.statusLabel.textColor = color
+                self?.statusLabel.isHidden = isHidden
+                self?.statusLabel.text = message
+            }
+        }
     }
 }
 

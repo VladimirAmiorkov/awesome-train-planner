@@ -22,7 +22,9 @@ protocol DataService {
     func getTrainMovements(byId id: String, andDate date: String, _ completion: @escaping (RailwaysResponse<[TrainMovement]>) -> Void)
 
     func findTrainRoutesFrom(_ from: String, _ completion: @escaping (RailwaysResponse<[[TrainRoute]]>) -> Void)
-    func findDirectionsFrom(_ origin: String, destination: String, forDirectRoute directRoute: Bool, _ completion: @escaping (RailwaysResponse<Route>) -> Void)
+
+    // TODO: Consider removing the `forDirectRoute directRoute: Bool` param as it is should not be needed. Only here for testing poath finding.
+    func findDirectionsFrom(_ origin: String, andDestination: String, forDirectRoute directRoute: Bool, _ completion: @escaping (RailwaysResponse<Route>) -> Void)
 
     func getAllTrainsMovementsFrom(_ from: String, _ completion: @escaping (RailwaysResponse<[[TrainMovement]]>) -> Void)
     
@@ -96,7 +98,6 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
     // TODO: rename all Direction to Route
 
     private func isRoute(_ route: TrainRoute, forDestination destination: String) -> Bool {
-//        return route.to == "Howth" // TODO: for testing with direct route, replace with `destination`
         return route.destinationCode == destination
     }
 
@@ -129,22 +130,30 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
         let flattenRoutes = routes.flatMap { $0 }
         var allStationCodes = [String]()
         for direction in flattenRoutes {
-            allStationCodes.append(direction.destinationCode)
-            allStationCodes.append(direction.originCode)
+            allStationCodes.append(direction.destinationCode.uppercased())
+            allStationCodes.append(direction.originCode.uppercased())
         }
 
+        let mapGraph = GKGraph()
         var allNodes = [StationGraphNode]()
         let uniqueStationCodes = Array(Set(allStationCodes))
         for stationCode in uniqueStationCodes {
             allNodes.append(StationGraphNode(code: stationCode))
         }
 
+        mapGraph.add(allNodes)
+
+        // TODO: Maybe this is not correct
         for stationCode in uniqueStationCodes {
             let currentNode = allNodes.first { $0.code == stationCode }
             if let currentNode = currentNode {
                 let connectionRoutes = flattenRoutes.filter { $0.originCode == stationCode }
                 let connectionNodes = getNotesFromRoutes(connectionRoutes, inDict: allNodes)
-                currentNode.addConnections(to: connectionNodes, bidirectional: false)
+
+                // Note, we limit the connections to only 1 train.
+                // TODO: Create multiple `GKGraph` to handle multiple trains case
+                let uniqueconnectionNodes = Array(Set(connectionNodes))
+                currentNode.addConnections(to: uniqueconnectionNodes, bidirectional: false)
 
                 let currentNodeIndex = allNodes.firstIndex(of: currentNode)
                 if let currentNodeIndex = currentNodeIndex {
@@ -153,11 +162,9 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
             }
         }
 
-        let mapGraph = GKGraph()
-        mapGraph.add(allNodes)
+        let originNode = allNodes.first { $0.code == originCode.uppercased() }
+        let destinationNode = allNodes.first { $0.code == destinationCode.uppercased() }
 
-        let originNode = allNodes.first { $0.code == originCode }
-        let destinationNode = allNodes.first { $0.code == destinationCode }
         var foundRoute: [TrainRoute] = []
         if let originNode = originNode, let destinationNode = destinationNode {
             let path = mapGraph.findPath(from: originNode, to: destinationNode)
@@ -207,25 +214,26 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
         return tripRoute
     }
 
-    func findDirectionsFrom(_ origin: String, destination: String, forDirectRoute directRoute: Bool, _ completion: @escaping (RailwaysResponse<Route>) -> Void) {
-        getStationData(withName: origin) { stationResponse in
-            let tempTrainRoute: Route = Route(directions: [], isDirect: false, origin: origin, destination: destination)
+    func findDirectionsFrom(_ origin: String, andDestination: String, forDirectRoute directRoute: Bool, _ completion: @escaping (RailwaysResponse<Route>) -> Void) {
+        getAllStationsData(){ stationResponse in
+            let tempTrainRoute: Route = Route(directions: [], isDirect: false, origin: origin, destination: andDestination)
             let response = RailwaysResponse<Route>(data: tempTrainRoute)
 
-            guard let originStationCode = stationResponse.data?.first?.Stationcode else {
-                let error = RaiwayResponseError(title: "Error getting station data", description: "Station data for \(origin) cannot be found.", code: 1)
-                response.error = error
-                completion(response)
-                return
-            }
+            if let data = stationResponse.data {
+                let originStationData = data.first { $0.StationDesc == origin }
+                let destinationStationData = data.first { $0.StationDesc == andDestination }
 
-            self.getStationData(withName: destination) { stationResponse in
-                guard let destinationStationCode = stationResponse.data?.first?.Stationcode else {
-                    let error = RaiwayResponseError(title: "Error getting station data", description: "Station data for \(destination) cannot be found.", code: 1)
+                guard var originStationCode = originStationData?.StationCode, var destinationStationCode = destinationStationData?.StationCode else {
+                    let error = RaiwayResponseError(title: "Error getting station data", description: "Station data for \(origin) cannot be found.", code: 1)
                     response.error = error
                     completion(response)
+
                     return
                 }
+
+                // Note: For some reason the API sometimes returns codes with empty trailing characters, we trim them to be able to use this with other APis
+                originStationCode = originStationCode.trimmingCharacters(in: .whitespacesAndNewlines)
+                destinationStationCode = destinationStationCode.trimmingCharacters(in: .whitespacesAndNewlines)
 
                 self.findTrainRoutesFrom(originStationCode) { receivedData in
 
@@ -237,7 +245,7 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
                     }
 
                     let data = self.findRouteFor(origin: originStationCode, andDestination: destinationStationCode, withTrainRoutes: trainRoutes, andDirectRoute: directRoute)
-                    let trainRoute: Route = Route(directions: data.directions, isDirect: data.isDirect, origin: origin, destination: destination)
+                    let trainRoute: Route = Route(directions: data.directions, isDirect: data.isDirect, origin: origin, destination: andDestination)
                     response.data = trainRoute
                     response.error = nil
                     completion(response)
@@ -281,7 +289,7 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
     }
 
     func getAllTrainsMovementsFrom(_ from: String, _ completion: @escaping (RailwaysResponse<[[TrainMovement]]>) -> Void) {
-        getStationData(withCode: from) { receivedData in
+        getCurrentTrains() { receivedData in
             let trainsMovements = [[TrainMovement]]()
             let response = RailwaysResponse<[[TrainMovement]]>(data: trainsMovements)
             guard let data = receivedData.data, data.count > 0 else {
@@ -291,16 +299,17 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
                 return
             }
 
-            let firstSrtation = data[0]
-            self.getTrainMovementsRecursive(byId: firstSrtation.Traincode, andDate: firstSrtation.Traindate, andResultData: [[TrainMovement]](), andSourceData: data) { trainMovemenetsData in
-                response.data = trainMovemenetsData
-                response.error = nil
-                completion(response)
+            if let firstPosition = data.first {
+                self.getTrainMovementsRecursive(byId: firstPosition.TrainCode, andDate: firstPosition.TrainDate, andResultData: [[TrainMovement]](), andSourceData: data) { trainMovemenetsData in
+                    response.data = trainMovemenetsData
+                    response.error = nil
+                    completion(response)
+                }
             }
         }
     }
 
-    private func getTrainMovementsRecursive(byId id: String, andDate date: String, andResultData resultData: [[TrainMovement]], andSourceData sourceData: [StationData],_ completion: @escaping ([[TrainMovement]]) -> Void) {
+    private func getTrainMovementsRecursive(byId id: String, andDate date: String, andResultData resultData: [[TrainMovement]], andSourceData sourceData: [TrainPosition],_ completion: @escaping ([[TrainMovement]]) -> Void) {
         self.getTrainMovements(byId: id, andDate: date) { trainData in
             guard let currentTrainData = trainData.data else { return }
             var newResult = resultData
@@ -308,8 +317,8 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
 
             let nextIndex = resultData.count
             if nextIndex < sourceData.count {
-                let direction = sourceData[nextIndex]
-                self.getTrainMovementsRecursive(byId: direction.Traincode, andDate: direction.Traindate, andResultData: newResult, andSourceData: sourceData, completion)
+                let trainPosition = sourceData[nextIndex]
+                self.getTrainMovementsRecursive(byId: trainPosition.TrainCode, andDate: trainPosition.TrainDate, andResultData: newResult, andSourceData: sourceData, completion)
             } else {
                 completion(resultData)
             }
