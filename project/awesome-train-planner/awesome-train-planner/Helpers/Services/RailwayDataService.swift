@@ -132,8 +132,8 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
     }
 
     func findRouteWithGraphFor(routes: [TrainRoute], andOrigin originCode: String, andDestination destinationCode: String) -> Route {
-        var originCaseInsensitive = originCode.uppercased()
-        var destinationCaseInsensitive = destinationCode.uppercased()
+        let originCaseInsensitive = originCode.uppercased()
+        let destinationCaseInsensitive = destinationCode.uppercased()
         var allStationCodes = [String]()
         for direction in routes {
             allStationCodes.append(direction.destinationCode.uppercased())
@@ -263,13 +263,16 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
     }
 
     func findDirectionsFrom(_ origin: String, andDestination: String, forDirectRoute directRoute: Bool, _ completion: @escaping (RailwaysResponse<Route>) -> Void) {
+        let originCaseInsensitive = origin.lowercased()
+        let destinationCaseInsensitive = andDestination.lowercased()
+
         getAllStationsData(){ stationResponse in
             let tempTrainRoute: Route = Route(directions: [], isDirect: false, origin: origin, destination: andDestination)
             let response = RailwaysResponse<Route>(data: tempTrainRoute)
 
             if let data = stationResponse.data {
-                let originStationData = data.first { $0.StationDesc == origin }
-                let destinationStationData = data.first { $0.StationDesc == andDestination }
+                let originStationData = data.first { $0.stationDescCaseInsensitive == originCaseInsensitive }
+                let destinationStationData = data.first { $0.stationDescCaseInsensitive == destinationCaseInsensitive }
 
                 guard var originStationCode = originStationData?.StationCode, var destinationStationCode = destinationStationData?.StationCode else {
                     let error = RaiwayResponseError(title: "Error getting station data", description: "Station data for \(origin) cannot be found.", code: 1)

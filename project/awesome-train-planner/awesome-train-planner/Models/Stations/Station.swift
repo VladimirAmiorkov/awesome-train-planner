@@ -11,6 +11,11 @@ import Foundation
 struct Station: Codable {
     
     let StationDesc: String
+    var stationDescCaseInsensitive: String {
+        get {
+            return StationDesc.lowercased()
+        }
+    }
     let StationAlias: String
     let StationLatitude: String
     let StationLongitude: String

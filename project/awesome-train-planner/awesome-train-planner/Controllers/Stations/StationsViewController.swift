@@ -99,7 +99,7 @@ class StationsViewController: UIViewController, UITableViewDelegate, UITableView
         updateStatusWith(status: .loading)
         dataService.getAllStationsData() { data in
             if let stations = data.data {
-                self.viewModel.stations = stations.sorted { $0.StationDesc.lowercased() < $1.StationDesc.lowercased() }
+                self.viewModel.stations = stations.sorted { $0.stationDescCaseInsensitive < $1.StationDesc.lowercased() }
             }
             
             if data.status != .failure {
