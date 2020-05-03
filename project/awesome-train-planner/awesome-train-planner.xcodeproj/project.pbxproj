@@ -48,6 +48,7 @@
 		88732D40245C1B2400627A1E /* Route.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88732D3F245C1B2400627A1E /* Route.swift */; };
 		88732D42245D582300627A1E /* RaiwayResponseError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88732D41245D582300627A1E /* RaiwayResponseError.swift */; };
 		88732D45245D63D700627A1E /* StationGraphNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88732D44245D63D700627A1E /* StationGraphNode.swift */; };
+		88732D48245EDCEA00627A1E /* Date+String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88732D47245EDCE900627A1E /* Date+String.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -115,6 +116,7 @@
 		88732D3F245C1B2400627A1E /* Route.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Route.swift; sourceTree = "<group>"; };
 		88732D41245D582300627A1E /* RaiwayResponseError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaiwayResponseError.swift; sourceTree = "<group>"; };
 		88732D44245D63D700627A1E /* StationGraphNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationGraphNode.swift; sourceTree = "<group>"; };
+		88732D47245EDCE900627A1E /* Date+String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+String.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -280,6 +282,7 @@
 		885CB92024570A480077C67C /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				88732D49245EF29000627A1E /* Extensions */,
 				881FD0CC2455B1EF00C9E3E5 /* Services */,
 				885CB92124570A4E0077C67C /* XML */,
 			);
@@ -467,6 +470,14 @@
 			path = Train;
 			sourceTree = "<group>";
 		};
+		88732D49245EF29000627A1E /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				88732D47245EDCE900627A1E /* Date+String.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -631,6 +642,7 @@
 				88732D132459BD7600627A1E /* StationCell.swift in Sources */,
 				881FD0D12455CAE400C9E3E5 /* IrishRailAPI.swift in Sources */,
 				88732D032459601100627A1E /* TrainsViewController.swift in Sources */,
+				88732D48245EDCEA00627A1E /* Date+String.swift in Sources */,
 				881FD0C42455ADBB00C9E3E5 /* MainViewModel.swift in Sources */,
 				885CB92E245829000077C67C /* TrainMovement.swift in Sources */,
 				881FD0CA2455B02700C9E3E5 /* LoadingStatus.swift in Sources */,

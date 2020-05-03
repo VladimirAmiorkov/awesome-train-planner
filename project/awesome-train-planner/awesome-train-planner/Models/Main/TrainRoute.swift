@@ -8,7 +8,12 @@
 
 import Foundation
 
-struct TrainRoute {
+struct TrainRoute: Comparable {
+    
+    static func < (lhs: TrainRoute, rhs: TrainRoute) -> Bool {
+        return lhs.hashcode == rhs.hashcode
+    }
+
     let originCode: String
     let destinationCode: String
     let originName: String

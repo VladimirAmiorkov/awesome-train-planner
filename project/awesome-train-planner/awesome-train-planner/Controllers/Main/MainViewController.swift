@@ -215,15 +215,31 @@ extension MainViewController {
 
         let directionObj = viewModel.directions[indexPath.row]
 
-        let textString = "Train: \(directionObj.trainCode) at: \(directionObj.time)"
-        let detailText =  "From: \(directionObj.originName) to: \(directionObj.destinationName)"
-        var myAttribute = [NSAttributedString.Key.foregroundColor: UIColor.systemOrange]
-        if directionObj.isDirect {
-            myAttribute = [NSAttributedString.Key.foregroundColor: UIColor.systemGreen]
-        }
+        let boldFont = [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17)]
+        let startString = NSMutableAttributedString(string: "Train: ", attributes: nil)
+        let trainStringAttributes: [NSAttributedString.Key: Any] = boldFont
+        let trainString = NSMutableAttributedString(string: "\(directionObj.trainCode) ", attributes: trainStringAttributes)
 
-        cell!.textLabel?.attributedText =  NSAttributedString(string: textString, attributes: myAttribute)
-        cell!.detailTextLabel?.attributedText = NSAttributedString(string: detailText, attributes: myAttribute)
+        let fromString = NSMutableAttributedString(string: "from: ", attributes: nil)
+        let fromStringAttributes: [NSAttributedString.Key: Any] = boldFont
+        let originString = NSMutableAttributedString(string: "\(directionObj.originName) ", attributes: fromStringAttributes)
+
+        let toString = NSMutableAttributedString(string: "to: ", attributes: nil)
+        let toStringAttributes: [NSAttributedString.Key: Any] = boldFont
+        let destinationString = NSMutableAttributedString(string: "\(directionObj.originName) ", attributes: toStringAttributes)
+
+        startString.append(trainString)
+        startString.append(fromString)
+        startString.append(originString)
+        startString.append(toString)
+        startString.append(destinationString)
+
+        let atString = NSMutableAttributedString(string: "At: ", attributes: nil)
+        let timeString = NSMutableAttributedString(string: "\(directionObj.time) ", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 13)])
+        atString.append(timeString)
+
+        cell!.textLabel?.attributedText =  startString
+        cell!.detailTextLabel?.attributedText = atString
         
         return cell!
     }

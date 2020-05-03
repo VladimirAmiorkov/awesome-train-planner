@@ -114,11 +114,16 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
 
     private func getRoutesFromNodes(_ nodes: [StationGraphNode], inSourceNodes sourceNodes: [StationGraphNode], andRoutes routes: [TrainRoute]) -> [TrainRoute] {
         var routeNodes = [TrainRoute]()
-        for node in nodes {
+        for (index, node) in nodes.enumerated() {
             if let currentNode: StationGraphNode = sourceNodes.first(where: { $0 == node }) {
-                let route = routes.first { $0.originCode == currentNode.code }
-                if let route = route {
-                    routeNodes.append(route)
+                // TODO: check which train goes from currentNode.code to next node
+                let nextIndex = index + 1
+                if nextIndex < nodes.count {
+                    let nextNote = nodes[index + 1]
+                    let route = routes.first { $0.originCode == currentNode.code && $0.destinationCode == nextNote.code }
+                    if let route = route {
+                        routeNodes.append(route)
+                    }
                 }
             }
         }
@@ -126,10 +131,11 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
         return routeNodes
     }
 
-    func findRouteWithGraphFor(routes: [[TrainRoute]], andOrigin originCode: String, andDestination destinationCode: String) -> Route {
-        let flattenRoutes = routes.flatMap { $0 }
+    func findRouteWithGraphFor(routes: [TrainRoute], andOrigin originCode: String, andDestination destinationCode: String) -> Route {
+        var originCaseInsensitive = originCode.uppercased()
+        var destinationCaseInsensitive = destinationCode.uppercased()
         var allStationCodes = [String]()
-        for direction in flattenRoutes {
+        for direction in routes {
             allStationCodes.append(direction.destinationCode.uppercased())
             allStationCodes.append(direction.originCode.uppercased())
         }
@@ -147,7 +153,11 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
         for stationCode in uniqueStationCodes {
             let currentNode = allNodes.first { $0.code == stationCode }
             if let currentNode = currentNode {
-                let connectionRoutes = flattenRoutes.filter { $0.originCode == stationCode }
+                var connectionRoutes = routes.filter { $0.originCode == stationCode }
+
+                // Remove redundant connection (the destination is represented as note from X to X)
+                connectionRoutes = connectionRoutes.filter { $0.originCode != $0.destinationCode }
+
                 let connectionNodes = getNotesFromRoutes(connectionRoutes, inDict: allNodes)
 
                 // Note, we limit the connections to only 1 train.
@@ -162,17 +172,54 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
             }
         }
 
-        let originNode = allNodes.first { $0.code == originCode.uppercased() }
-        let destinationNode = allNodes.first { $0.code == destinationCode.uppercased() }
+        let originNode = allNodes.first { $0.code == originCaseInsensitive }
+        let destinationNode = allNodes.first { $0.code == destinationCaseInsensitive }
 
         var foundRoute: [TrainRoute] = []
         if let originNode = originNode, let destinationNode = destinationNode {
-            let path = mapGraph.findPath(from: originNode, to: destinationNode)
-            let pathStationNodes =  path.map { $0 as! StationGraphNode }
-            foundRoute = getRoutesFromNodes(pathStationNodes, inSourceNodes: allNodes, andRoutes: flattenRoutes)
+            foundRoute = getRouteFromGraph(mapGraph, fromOriginNode: originNode, toDestinationNode: destinationNode, inNodes: allNodes, andRoutes: routes)
+
+            var lastRouteDate: Date? = nil
+            var overdueRoute: TrainRoute? = nil
+            for route in foundRoute {
+                // TODO: (refactor) See if we cant retrive the "date" value from the APis, currently uses today as the `yyyy-MM-dd` part of the date, which is correect
+                // because here all of the train movements are already for the cyrrent day
+                let dateString = Date().string(format: "yyyy-MM-dd")
+                let dateFormat = "yyyy-MM-dd HH:mm:ss"
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = dateFormat
+
+                let routeDate = dateFormatter.date(from: "\(dateString) \(route.time)")
+
+                if let routeDate = routeDate {
+                    if let lastRouteDate = lastRouteDate {
+                        if routeDate < lastRouteDate {
+                            overdueRoute = route
+                            break
+                        }
+                    }
+
+                    lastRouteDate = routeDate
+                }
+            }
+
+            if let overdueRoute = overdueRoute {
+                let newRoutes = routes.filter { $0 != overdueRoute }
+
+                return findRouteWithGraphFor(routes: newRoutes, andOrigin: originCode, andDestination: destinationCode)
+            }
         }
 
         return Route(directions: foundRoute, isDirect: false, origin: originCode, destination: destinationCode)
+    }
+
+    private func getRouteFromGraph(_ graph: GKGraph, fromOriginNode originNode: StationGraphNode, toDestinationNode destinationNode: StationGraphNode, inNodes nodes: [StationGraphNode], andRoutes routes: [TrainRoute]) -> [TrainRoute]{
+        var foundRoute: [TrainRoute] = []
+        let path = graph.findPath(from: originNode, to: destinationNode)
+        let pathStationNodes =  path.map { $0 as! StationGraphNode }
+        foundRoute = getRoutesFromNodes(pathStationNodes, inSourceNodes: nodes, andRoutes: routes)
+
+        return foundRoute
     }
 
     private func findRouteFor(origin: String, andDestination destiantion: String, withTrainRoutes trainRoutes: [[TrainRoute]], andDirectRoute directRoute: Bool) -> Route {
@@ -208,7 +255,8 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
 
             return tripRoute
         } else {
-            tripRoute = findRouteWithGraphFor(routes: trainRoutes, andOrigin: origin, andDestination: destiantion)
+            let flattenRoutes = trainRoutes.flatMap { $0 }
+            tripRoute = findRouteWithGraphFor(routes: flattenRoutes, andOrigin: origin, andDestination: destiantion)
         }
 
         return tripRoute
