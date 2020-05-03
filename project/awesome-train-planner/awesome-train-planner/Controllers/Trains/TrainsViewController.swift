@@ -67,7 +67,6 @@ class TrainsViewController: UIViewController, UITableViewDelegate, UITableViewDa
     }
 
     private func setupView() {
-        resultsList.register(StationCell.self, forCellReuseIdentifier: StationCell.reuseIdentifier)
         resultsList.backgroundColor = listColor
     }
     
@@ -125,12 +124,16 @@ extension TrainsViewController {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: StationCell.reuseIdentifier, for: indexPath)
+        var cell = tableView.dequeueReusableCell(withIdentifier: TrainCardCell.reuseIdentifier)
+        if cell == nil {
+            cell = UITableViewCell(style: .subtitle, reuseIdentifier: TrainCardCell.reuseIdentifier)
+        }
         let trainMovement = viewModel.trainPosition[indexPath.row]
 
-        cell.textLabel?.text = "Code: \(trainMovement.TrainCode)"
+        cell!.textLabel?.text = "Code: \(trainMovement.TrainCode)"
+        cell!.detailTextLabel?.text = "Direction: \(trainMovement.Direction)"
         
-        return cell
+        return cell!
     }
     
 }

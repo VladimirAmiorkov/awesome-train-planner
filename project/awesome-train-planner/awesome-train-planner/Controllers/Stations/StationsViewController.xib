@@ -24,23 +24,23 @@
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Stations" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UZR-kV-N63">
-                            <rect key="frame" x="147.5" y="118" width="119.5" height="41"/>
+                            <rect key="frame" x="147.5" y="64" width="119.5" height="41"/>
                             <fontDescription key="fontDescription" style="UICTFontTextStyleTitle0"/>
                             <nil key="textColor"/>
                             <nil key="highlightedColor"/>
                         </label>
                         <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="yLh-SD-ziH">
-                            <rect key="frame" x="275" y="128.5" width="20" height="20"/>
+                            <rect key="frame" x="275" y="74.5" width="20" height="20"/>
                         </activityIndicatorView>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="10S-Q2-2Gz">
-                            <rect key="frame" x="180.5" y="174" width="53" height="30"/>
+                            <rect key="frame" x="180.5" y="120" width="53" height="30"/>
                             <state key="normal" title="Refresh"/>
                             <connections>
                                 <action selector="refreshTap:" destination="-1" eventType="touchUpInside" id="A9N-ZX-RKz"/>
                             </connections>
                         </button>
                         <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="vGN-TD-XRm">
-                            <rect key="frame" x="0.0" y="219" width="414" height="677"/>
+                            <rect key="frame" x="0.0" y="165" width="414" height="731"/>
                             <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                             <color key="sectionIndexBackgroundColor" systemColor="systemGreenColor" red="0.20392156859999999" green="0.78039215689999997" blue="0.34901960780000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <connections>
@@ -61,7 +61,7 @@
                         <constraint firstItem="UZR-kV-N63" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="e5g-a5-WXc"/>
                         <constraint firstItem="yLh-SD-ziH" firstAttribute="centerY" secondItem="UZR-kV-N63" secondAttribute="centerY" id="kYe-hL-0d7"/>
                         <constraint firstItem="yLh-SD-ziH" firstAttribute="leading" secondItem="UZR-kV-N63" secondAttribute="trailing" constant="8" id="oLH-cO-OwE"/>
-                        <constraint firstItem="UZR-kV-N63" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="74" id="uwk-O5-11w"/>
+                        <constraint firstItem="UZR-kV-N63" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="20" id="uwk-O5-11w"/>
                     </constraints>
                     <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                 </view>
