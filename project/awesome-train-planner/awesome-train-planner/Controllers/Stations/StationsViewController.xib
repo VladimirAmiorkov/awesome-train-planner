@@ -55,7 +55,6 @@
                         <constraint firstItem="vGN-TD-XRm" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="CFc-78-R2m"/>
                         <constraint firstAttribute="bottom" secondItem="vGN-TD-XRm" secondAttribute="bottom" id="FPR-oa-FBT"/>
                         <constraint firstItem="UZR-kV-N63" firstAttribute="centerX" secondItem="10S-Q2-2Gz" secondAttribute="centerX" id="JFe-mu-MRW"/>
-                        <constraint firstItem="vGN-TD-XRm" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" constant="34" id="NQi-LX-2kB"/>
                         <constraint firstItem="vGN-TD-XRm" firstAttribute="top" secondItem="10S-Q2-2Gz" secondAttribute="bottom" constant="15" id="Q0p-sN-WNN"/>
                         <constraint firstItem="10S-Q2-2Gz" firstAttribute="top" secondItem="UZR-kV-N63" secondAttribute="bottom" constant="15" id="R7h-LC-6gj"/>
                         <constraint firstItem="vGN-TD-XRm" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="bdj-ZH-DI1"/>
