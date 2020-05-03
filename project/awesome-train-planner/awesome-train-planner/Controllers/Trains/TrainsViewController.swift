@@ -149,5 +149,5 @@ extension TrainsViewController {
 
 // MARK: Constaints
 private extension TrainsViewController {
-    private var listColor: UIColor { .systemTeal }
+    private var listColor: UIColor { .tertiarySystemBackground }
 }

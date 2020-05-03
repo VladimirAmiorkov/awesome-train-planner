@@ -143,5 +143,5 @@ extension StationsViewController {
 
 // MARK: Constaints
 private extension StationsViewController {
-    private var listColor: UIColor { .systemGreen }
+    private var listColor: UIColor { .secondarySystemBackground }
 }

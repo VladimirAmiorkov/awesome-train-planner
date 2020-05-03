@@ -102,7 +102,7 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
-                                    <color key="backgroundColor" systemColor="systemTealColor" red="0.35294117650000001" green="0.7843137255" blue="0.98039215690000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <color key="backgroundColor" systemColor="tertiarySystemBackgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <constraints>
                                         <constraint firstItem="DfM-3U-4cV" firstAttribute="width" secondItem="aPO-Ap-pQS" secondAttribute="width" multiplier="0.5" id="1Xr-dc-CEg"/>
                                         <constraint firstItem="MaB-xU-XQU" firstAttribute="top" secondItem="rp3-78-6d4" secondAttribute="bottom" constant="20" id="1dp-uj-Nlf"/>
@@ -145,7 +145,7 @@
                             <viewLayoutGuide key="frameLayoutGuide" id="Ezc-Vg-yGs"/>
                         </scrollView>
                     </subviews>
-                    <color key="backgroundColor" systemColor="systemTealColor" red="0.35294117650000001" green="0.7843137255" blue="0.98039215690000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <color key="backgroundColor" systemColor="tertiarySystemBackgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
                         <constraint firstItem="aPO-Ap-pQS" firstAttribute="width" secondItem="6Tk-OE-BBY" secondAttribute="width" id="SyR-gX-Q1O"/>
                         <constraint firstItem="6Tk-OE-BBY" firstAttribute="leading" secondItem="FAz-BP-JEN" secondAttribute="leading" id="WYy-hN-EJt"/>
