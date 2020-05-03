@@ -101,11 +101,20 @@
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dRS-Zv-hTR">
+                                            <rect key="frame" x="168" y="105" width="78" height="30"/>
+                                            <state key="normal" title="Copy name"/>
+                                            <connections>
+                                                <action selector="copyNameTap:" destination="-1" eventType="touchUpInside" id="A8n-1q-8XC"/>
+                                            </connections>
+                                        </button>
                                     </subviews>
                                     <color key="backgroundColor" systemColor="systemGreenColor" red="0.20392156859999999" green="0.78039215689999997" blue="0.34901960780000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     <constraints>
+                                        <constraint firstItem="dRS-Zv-hTR" firstAttribute="top" secondItem="erI-dl-l8W" secondAttribute="bottom" constant="34" id="0xZ-CM-hBZ"/>
                                         <constraint firstItem="DfM-3U-4cV" firstAttribute="width" secondItem="aPO-Ap-pQS" secondAttribute="width" multiplier="0.5" id="1Xr-dc-CEg"/>
                                         <constraint firstItem="MaB-xU-XQU" firstAttribute="top" secondItem="rp3-78-6d4" secondAttribute="bottom" constant="20" id="1dp-uj-Nlf"/>
+                                        <constraint firstItem="dRS-Zv-hTR" firstAttribute="centerX" secondItem="aPO-Ap-pQS" secondAttribute="centerX" id="3w9-TH-SGj"/>
                                         <constraint firstItem="dbv-pU-Yps" firstAttribute="top" secondItem="MaB-xU-XQU" secondAttribute="bottom" constant="20" id="6id-db-j8e"/>
                                         <constraint firstItem="YIr-lV-O4b" firstAttribute="leading" secondItem="bTR-ay-mxg" secondAttribute="leading" id="7TR-NL-0c3"/>
                                         <constraint firstItem="Gfd-ot-xg6" firstAttribute="width" secondItem="DfM-3U-4cV" secondAttribute="width" id="7Va-Fs-Tcb"/>
@@ -117,6 +126,7 @@
                                         <constraint firstItem="cGf-hA-UBF" firstAttribute="leading" secondItem="aPO-Ap-pQS" secondAttribute="leading" constant="50" id="RiU-d3-TyS"/>
                                         <constraint firstItem="bTR-ay-mxg" firstAttribute="leading" secondItem="Gfd-ot-xg6" secondAttribute="leading" id="Tcn-dq-M2g"/>
                                         <constraint firstItem="erI-dl-l8W" firstAttribute="top" secondItem="aPO-Ap-pQS" secondAttribute="top" constant="30" id="Thy-L8-uW2"/>
+                                        <constraint firstItem="cGf-hA-UBF" firstAttribute="top" secondItem="dRS-Zv-hTR" secondAttribute="bottom" constant="37" id="XgE-iH-KaU"/>
                                         <constraint firstItem="rp3-78-6d4" firstAttribute="leading" secondItem="tk1-11-5Mo" secondAttribute="leading" id="asq-qM-aiP"/>
                                         <constraint firstItem="erI-dl-l8W" firstAttribute="centerX" secondItem="aPO-Ap-pQS" secondAttribute="centerX" id="f5h-ow-NNX"/>
                                         <constraint firstItem="WlI-bz-KEX" firstAttribute="width" secondItem="YIr-lV-O4b" secondAttribute="width" id="gyO-SJ-HDy"/>
@@ -127,7 +137,6 @@
                                         <constraint firstItem="tk1-11-5Mo" firstAttribute="top" secondItem="cGf-hA-UBF" secondAttribute="bottom" constant="20" id="psn-dt-jru"/>
                                         <constraint firstItem="rp3-78-6d4" firstAttribute="top" secondItem="tk1-11-5Mo" secondAttribute="bottom" constant="20" id="qB4-pd-Yom"/>
                                         <constraint firstItem="WlI-bz-KEX" firstAttribute="firstBaseline" secondItem="dbv-pU-Yps" secondAttribute="firstBaseline" id="qup-LE-gie"/>
-                                        <constraint firstItem="cGf-hA-UBF" firstAttribute="top" secondItem="erI-dl-l8W" secondAttribute="bottom" constant="101" id="r88-iK-qxs"/>
                                         <constraint firstItem="Gfd-ot-xg6" firstAttribute="firstBaseline" secondItem="tk1-11-5Mo" secondAttribute="firstBaseline" id="rQr-w0-CcS"/>
                                         <constraint firstItem="YIr-lV-O4b" firstAttribute="firstBaseline" secondItem="MaB-xU-XQU" secondAttribute="firstBaseline" id="sdh-sq-2gD"/>
                                         <constraint firstItem="bTR-ay-mxg" firstAttribute="firstBaseline" secondItem="rp3-78-6d4" secondAttribute="firstBaseline" id="vuX-eV-1gM"/>

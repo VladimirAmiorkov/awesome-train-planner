@@ -53,6 +53,12 @@ class StationViewController: UIViewController, StationViewControllerProtocol {
         setupBidnings()
     }
 
+    // MARK: - IBAction
+
+    @IBAction func copyNameTap(_ sender: Any) {
+        UIPasteboard.general.string = viewModel.station.StationDesc
+    }
+
     func setupBidnings() {
         stationSubscriber = viewModel.$station.receive(on: DispatchQueue.main).sink(receiveValue: { receiveValue in
             self.nameLabel.text = receiveValue.StationDesc
