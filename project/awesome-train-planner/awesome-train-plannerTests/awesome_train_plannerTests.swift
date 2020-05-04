@@ -7,7 +7,7 @@
 //
 
 import XCTest
-@testable import awesome_train_planner
+@testable import Awesome_train_planner
 
 class awesome_train_plannerTests: XCTestCase {
 
