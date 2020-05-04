@@ -49,6 +49,7 @@
 		88732D42245D582300627A1E /* RaiwayResponseError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88732D41245D582300627A1E /* RaiwayResponseError.swift */; };
 		88732D45245D63D700627A1E /* StationGraphNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88732D44245D63D700627A1E /* StationGraphNode.swift */; };
 		88732D48245EDCEA00627A1E /* Date+String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88732D47245EDCE900627A1E /* Date+String.swift */; };
+		88732D4D24600E3700627A1E /* MainRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88732D4C24600E3700627A1E /* MainRouter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -117,6 +118,7 @@
 		88732D41245D582300627A1E /* RaiwayResponseError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaiwayResponseError.swift; sourceTree = "<group>"; };
 		88732D44245D63D700627A1E /* StationGraphNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationGraphNode.swift; sourceTree = "<group>"; };
 		88732D47245EDCE900627A1E /* Date+String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+String.swift"; sourceTree = "<group>"; };
+		88732D4C24600E3700627A1E /* MainRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainRouter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -402,6 +404,7 @@
 		88732D212459D04300627A1E /* Main */ = {
 			isa = PBXGroup;
 			children = (
+				88732D4C24600E3700627A1E /* MainRouter.swift */,
 			);
 			path = Main;
 			sourceTree = "<group>";
@@ -614,6 +617,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				88732D37245AE42600627A1E /* TrainViewModel.swift in Sources */,
+				88732D4D24600E3700627A1E /* MainRouter.swift in Sources */,
 				8851BF7524546EB20091C925 /* MainViewController.swift in Sources */,
 				885CB92324570A8E0077C67C /* RailwaysDataXMLParserDelegate.swift in Sources */,
 				88732D40245C1B2400627A1E /* Route.swift in Sources */,

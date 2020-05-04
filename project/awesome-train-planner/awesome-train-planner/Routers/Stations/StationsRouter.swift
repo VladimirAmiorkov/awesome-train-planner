@@ -13,12 +13,14 @@ protocol StationsRouterProtocol {
     var viewControler: UINavigationController { get }
     
     func showDetailsWith(station: Station)
+
+    init(viewControler: UINavigationController)
 }
 
 class StationsRouter: StationsRouterProtocol {
     let viewControler: UINavigationController
     
-    init(viewControler: UINavigationController) {
+    required init(viewControler: UINavigationController) {
         self.viewControler = viewControler
     }
     

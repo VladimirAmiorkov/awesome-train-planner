@@ -19,12 +19,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.windowScene = windowScene
 
         let tabBarController = TabBarViewController()
+
+        let mainNavController = UINavigationController()
+        mainNavController.isNavigationBarHidden = true
         
-        let mainViewController = MainViewController(viewModel: MainViewModel(), andDataService: RailwayDataService())
+        let mainViewController = MainViewController(viewModel: MainViewModel(), andDataService: RailwayDataService(), andRouter: MainRouter(viewControler: mainNavController))
         let mainTabItem = UITabBarItem()
         mainTabItem.title = "Home"
         mainTabItem.image = UIImage(named: "main-tabbar-icon")
         mainViewController.tabBarItem = mainTabItem
+        mainNavController.viewControllers = [mainViewController]
 
         let stationsNavController = UINavigationController()
         stationsNavController.isNavigationBarHidden = true
@@ -46,8 +50,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         trainsViewController.tabBarItem = trainsTabItem
         trainsNavController.viewControllers = [trainsViewController]
         
-        tabBarController.viewControllers = [mainViewController, stationsNavController, trainsNavController]
-        tabBarController.selectedViewController = mainViewController
+        tabBarController.viewControllers = [mainNavController, stationsNavController, trainsNavController]
+        tabBarController.selectedViewController = mainNavController
         
         window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()

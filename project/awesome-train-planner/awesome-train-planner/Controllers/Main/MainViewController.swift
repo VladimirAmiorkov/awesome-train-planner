@@ -12,8 +12,9 @@ import Combine
 protocol MainViewControllerProtocol {
     var viewModel: MainViewModel { get }
     var dataService: DataService { get }
+    var router: MainRouterProtocol { get }
     
-    init(viewModel: MainViewModel, andDataService dataService: DataService)
+    init(viewModel: MainViewModel, andDataService dataService: DataService, andRouter router: MainRouterProtocol)
 }
 
 class MainViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, MainViewControllerProtocol {
@@ -35,6 +36,7 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     let viewModel: MainViewModel
     let dataService: DataService
+    var router: MainRouterProtocol
 
     // MARK: Initialization
     
@@ -43,9 +45,10 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         fatalError("init(coder:) has not been implemented")
     }
 
-    required init(viewModel: MainViewModel, andDataService dataService: DataService) {
+    required init(viewModel: MainViewModel, andDataService dataService: DataService, andRouter router: MainRouterProtocol) {
         self.viewModel = viewModel
         self.dataService = dataService
+        self.router = router
         super.init(nibName: nil, bundle: nil)
     }
 
