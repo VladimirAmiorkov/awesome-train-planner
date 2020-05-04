@@ -232,6 +232,7 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
         return tripRoute
     }
 
+    // TODO: This can be triggered multiple times, if user presses search multiple times. Add a way to cancel running task
     func findDirectionsFrom(_ origin: String, andDestination destination: String, _ completion: @escaping (RailwaysResponse<Route>) -> Void) {
         getAllStationsData(){ stationResponse in
             self.processAllStationData(stationResponse, origin: origin, andDestination: destination, completion)
