@@ -76,6 +76,12 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         viewModel.directRoutesEnabled = sender.isOn
     }
 
+    @IBAction func switchOriginAndDestination(_ sender: UIButton) {
+        let originValue = viewModel.origin
+        viewModel.origin = viewModel.destination
+        viewModel.destination = originValue
+    }
+
     @objc func dismissKeyboard() {
         view.endEditing(true)
     }
