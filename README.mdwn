@@ -5,3 +5,38 @@ http://api.irishrail.ie/realtime/
 # Goal
 
 'Every day I travel between Arklow and Shankill. Using this API write a small app that would be useful to me'
+
+# Application
+
+## Functionality
+
+- Find a "trip" between two stations in Ireland (it will find both direct and indirect routes)
+- View all stations by name and code
+    - Check full details about a station
+- View all current "active" trains
+    - View full details about a train
+
+## Screenshots
+Main tab 1:
+
+![Main tab 1](screenshots/main-screen-1.png)
+
+Main tab 2:
+
+![Main tab 2](screenshots/main-screen-2.png)
+
+Stations tab 1:
+
+![Stations tab 1](screenshots/stations-screen-1.png)
+
+Stations tab 2:
+
+![Stations tab 2](screenshots/stations-screen-2.png)
+
+Trains tab 1:
+
+![Trains tab 1](screenshots/trains-screen-1.png)
+
+Trains tab 2:
+
+![Trains tab 2](screenshots/trains-screen-2.png)
