@@ -28,7 +28,7 @@ protocol DataService {
 
     func getAllTrainsMovementsFrom(_ from: String, _ completion: @escaping (RailwaysResponse<[[TrainMovement]]>) -> Void)
 
-    // MARK: Mocks
+    // MARK: Mocks, remove this ASAP, only here for testing uding times when there are no enough trains in live data
     func mockFindDirectionsFrom(_ origin: String, andDestination: String, forDirectRoute directRoute: Bool, _ completion: @escaping (RailwaysResponse<Route>) -> Void)
 }
 
@@ -493,7 +493,7 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
 
 
 
-    // MARK: Mocks
+    // MARK: Mocks, remove this ASAP, only here for testing uding times when there are no enough trains in live data
 
     func mockFindDirectionsFrom(_ origin: String, andDestination: String, forDirectRoute directRoute: Bool, _ completion: @escaping (RailwaysResponse<Route>) -> Void) {
         let originCaseInsensitive = origin.lowercased()
