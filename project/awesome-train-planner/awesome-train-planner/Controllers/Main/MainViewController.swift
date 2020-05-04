@@ -232,7 +232,7 @@ extension MainViewController {
 
         let toString = NSMutableAttributedString(string: "to: ", attributes: nil)
         let toStringAttributes: [NSAttributedString.Key: Any] = boldFont
-        let destinationString = NSMutableAttributedString(string: "\(directionObj.originName) ", attributes: toStringAttributes)
+        let destinationString = NSMutableAttributedString(string: "\(directionObj.destinationName) ", attributes: toStringAttributes)
 
         startString.append(trainString)
         startString.append(fromString)
