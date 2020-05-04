@@ -146,6 +146,7 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
 
         // Mock stations: A, B, C, Z
         // A to Z uses two different trains that fit into the a time frame. Remove this
+        //  To use simply replace `findDirectionsFrom(origin, andDestination: destination)` with `dataService.mockFindDirectionsFrom("A", andDestination: "Z")`
 //        dataService.mockFindDirectionsFrom("A", andDestination: "Z") { data in
         dataService.findDirectionsFrom(origin, andDestination: destination) { data in
             switch data.status {
