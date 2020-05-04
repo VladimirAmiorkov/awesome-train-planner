@@ -121,6 +121,9 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
 
         updateStatusWith(status: .loading, andMessage:  "Fetching data ...")
 
+        // TODO: This can be triggered multiple times, if user presses search multiple times. Add a way to cancel running task
+        // Mock stations: A, B, C, Z
+//        dataService.mockFindDirectionsFrom("A", andDestination: "Z", forDirectRoute: viewModel.directRoutesEnabled) { data in
         dataService.findDirectionsFrom(origin, andDestination: destination, forDirectRoute: viewModel.directRoutesEnabled) { data in
             switch data.status {
             case .failure:

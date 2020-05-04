@@ -27,7 +27,9 @@ protocol DataService {
     func findDirectionsFrom(_ origin: String, andDestination: String, forDirectRoute directRoute: Bool, _ completion: @escaping (RailwaysResponse<Route>) -> Void)
 
     func getAllTrainsMovementsFrom(_ from: String, _ completion: @escaping (RailwaysResponse<[[TrainMovement]]>) -> Void)
-    
+
+    // MARK: Mocks
+    func mockFindDirectionsFrom(_ origin: String, andDestination: String, forDirectRoute directRoute: Bool, _ completion: @escaping (RailwaysResponse<Route>) -> Void)
 }
 
 class RailwayDataService: NSObject, DataService, XMLParserDelegate {
@@ -307,36 +309,40 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
 
     func findTrainRoutesFrom(_ from: String, _ completion: @escaping (RailwaysResponse<[[TrainRoute]]>) -> Void) {
         getAllTrainsMovementsFrom(from) { receivedData in
-            let trainsMovements = [[TrainRoute]]()
-            let response = RailwaysResponse<[[TrainRoute]]>(data: trainsMovements)
-            guard let trains = receivedData.data else {
-                response.data = nil
-                response.error = receivedData.error
-                completion(response)
-                return
-            }
+            self.processData(receivedData, completion)
+        }
+    }
 
-            var trainDirections = [[TrainRoute]]()
-            for trainMovements in trains {
-                var currentTrainDirections = [TrainRoute]()
-                for (index, movment) in trainMovements.enumerated() {
-                    var nextMovement: TrainMovement? = nil
-                    let nextIndex = index + 1
-                    if nextIndex < trainMovements.count {
-                        nextMovement = trainMovements[nextIndex]
-                    }
+    private  func processData(_ receivedData: RailwaysResponse<[[TrainMovement]]>, _ completion: @escaping (RailwaysResponse<[[TrainRoute]]>) -> Void) {
+        let trainsMovements = [[TrainRoute]]()
+        let response = RailwaysResponse<[[TrainRoute]]>(data: trainsMovements)
+        guard let trains = receivedData.data else {
+            response.data = nil
+            response.error = receivedData.error
+            completion(response)
+            return
+        }
 
-                    let direction = TrainRoute(originCode: movment.LocationCode , destinationCode: nextMovement?.LocationCode ?? movment.TrainDestination, originName: movment.LocationFullName, destinationName: nextMovement?.LocationFullName ?? movment.TrainDestination, trainCode: movment.TrainCode, time: movment.ExpectedArrival, isDirect: false)
-                    currentTrainDirections.append(direction)
+        var trainDirections = [[TrainRoute]]()
+        for trainMovements in trains {
+            var currentTrainDirections = [TrainRoute]()
+            for (index, movment) in trainMovements.enumerated() {
+                var nextMovement: TrainMovement? = nil
+                let nextIndex = index + 1
+                if nextIndex < trainMovements.count {
+                    nextMovement = trainMovements[nextIndex]
                 }
 
-                trainDirections.append(currentTrainDirections)
+                let direction = TrainRoute(originCode: movment.LocationCode , destinationCode: nextMovement?.LocationCode ?? movment.TrainDestination, originName: movment.LocationFullName, destinationName: nextMovement?.LocationFullName ?? movment.TrainDestination, trainCode: movment.TrainCode, time: movment.ExpectedArrival, isDirect: false)
+                currentTrainDirections.append(direction)
             }
 
-            response.data = trainDirections
-            response.error = nil
-            completion(response)
+            trainDirections.append(currentTrainDirections)
         }
+
+        response.data = trainDirections
+        response.error = nil
+        completion(response)
     }
 
     func getAllTrainsMovementsFrom(_ from: String, _ completion: @escaping (RailwaysResponse<[[TrainMovement]]>) -> Void) {
@@ -483,5 +489,89 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
         }
         
         task.resume()
+    }
+
+
+
+    // MARK: Mocks
+
+    func mockFindDirectionsFrom(_ origin: String, andDestination: String, forDirectRoute directRoute: Bool, _ completion: @escaping (RailwaysResponse<Route>) -> Void) {
+        let originCaseInsensitive = origin.lowercased()
+        let destinationCaseInsensitive = andDestination.lowercased()
+
+        mockFindTrainRoutesFrom(originCaseInsensitive) { receivedData in
+            let tempTrainRoute: Route = Route(directions: [], isDirect: false, origin: origin, destination: andDestination)
+            let response = RailwaysResponse<Route>(data: tempTrainRoute)
+
+            guard let trainRoutes = receivedData.data else {
+                response.data = nil
+                response.error = receivedData.error
+                completion(response)
+                return
+            }
+
+            let data = self.findRouteFor(origin: originCaseInsensitive, andDestination: destinationCaseInsensitive, withTrainRoutes: trainRoutes, andDirectRoute: directRoute)
+            let trainRoute: Route = Route(directions: data.directions, isDirect: data.isDirect, origin: origin, destination: andDestination)
+            response.data = trainRoute
+            response.error = nil
+            completion(response)
+        }
+    }
+
+    private func mockFindTrainRoutesFrom(_ from: String, _ completion: @escaping (RailwaysResponse<[[TrainRoute]]>) -> Void) {
+        let response = RailwaysResponse<[[TrainMovement]]>(data: self.trainMovementsMock())
+        self.processData(response, completion)
+    }
+
+    private func trainMovementsMock() -> [[TrainMovement]] {
+        // Assumes arrival and departure of trains is 1 hour apart
+        // 00:00:00 means that there is not time set
+        let todaytDate = "3 May 2020"
+        let stationCodes = ["A", "B", "C", "Z"]
+
+        var trainMovements = [[TrainMovement]]()
+        var trainMovementsLineTrain1 = [TrainMovement]()
+
+        // Train 1 A
+        var currentStationCode = stationCodes[0] // A
+        var currentDestinationCode = stationCodes[2] // C
+        let train1Movmement1 = TrainMovement(TrainCode: "Train 1", TrainDate: todaytDate, LocationCode: currentStationCode, LocationFullName: "\(currentStationCode) name", LocationOrder: "1", LocationType: "location type", TrainOrigin: stationCodes[0], TrainDestination: currentDestinationCode, ScheduledArrival: "10:00:00", ScheduledDeparture: "11:00:00", ExpectedArrival: "10:00:01", ExpectedDeparture: "11:00:01", Arrival: "", Departure: "", AutoArrival: "", AutoDepart: "", StopType: "stop type")
+        trainMovementsLineTrain1.append(train1Movmement1)
+
+        // Train 1 B
+        currentStationCode = stationCodes[1] // B
+        let train1Movmement2 = TrainMovement(TrainCode: "Train 1", TrainDate: todaytDate, LocationCode: currentStationCode, LocationFullName: "\(currentStationCode) name", LocationOrder: "2", LocationType: "location type", TrainOrigin: stationCodes[0], TrainDestination: currentDestinationCode, ScheduledArrival: "12:00:00", ScheduledDeparture: "13:00:00", ExpectedArrival: "12:00:01", ExpectedDeparture: "13:00:01", Arrival: "", Departure: "", AutoArrival: "", AutoDepart: "", StopType: "stop type")
+        trainMovementsLineTrain1.append(train1Movmement2)
+
+        // Train 1 C
+        currentStationCode = stationCodes[2] // C
+        let train1Movmement3 = TrainMovement(TrainCode: "Train 1", TrainDate: todaytDate, LocationCode: currentStationCode, LocationFullName: "\(currentStationCode) name", LocationOrder: "2", LocationType: "location type", TrainOrigin: stationCodes[0], TrainDestination: currentDestinationCode, ScheduledArrival: "14:00:00", ScheduledDeparture: "00:00:00", ExpectedArrival: "14:00:01", ExpectedDeparture: "00:00:00", Arrival: "", Departure: "", AutoArrival: "", AutoDepart: "", StopType: "stop type")
+        trainMovementsLineTrain1.append(train1Movmement3)
+
+        trainMovements.append(trainMovementsLineTrain1)
+
+        // Train 2 B
+        var trainMovementsLineTrain2 = [TrainMovement]()
+
+        currentStationCode = stationCodes[1] //B
+        currentDestinationCode = stationCodes[3] // Z
+        var expectedArrival = "12:30:01" // 12:30:01 value, 09:30:01 invalud (overdue hour)
+        let train2Movmement1 = TrainMovement(TrainCode: "train 2", TrainDate: todaytDate, LocationCode: currentStationCode, LocationFullName: "\(currentStationCode) name", LocationOrder: "1", LocationType: "location type", TrainOrigin: stationCodes[1], TrainDestination: currentDestinationCode, ScheduledArrival: "12:30:00", ScheduledDeparture: "13:00:00", ExpectedArrival: expectedArrival, ExpectedDeparture: "13:00:01", Arrival: "", Departure: "", AutoArrival: "", AutoDepart: "", StopType: "stop type")
+        trainMovementsLineTrain2.append(train2Movmement1)
+
+        trainMovements.append(trainMovementsLineTrain2)
+
+        // Train 3 C
+        var trainMovementsLineTrain3 = [TrainMovement]()
+
+        currentStationCode = stationCodes[2] //C
+        currentDestinationCode = stationCodes[3] // Z
+        expectedArrival = "14:30:01" // 14:30:01 value, 09:30:01 invalud (overdue hour)
+        let train3Movmement1 = TrainMovement(TrainCode: "train 3", TrainDate: todaytDate, LocationCode: currentStationCode, LocationFullName: "\(currentStationCode) name", LocationOrder: "1", LocationType: "location type", TrainOrigin: stationCodes[2], TrainDestination: currentDestinationCode, ScheduledArrival: "12:30:00", ScheduledDeparture: "13:00:00", ExpectedArrival: expectedArrival, ExpectedDeparture: "13:00:01", Arrival: "", Departure: "", AutoArrival: "", AutoDepart: "", StopType: "stop type")
+        trainMovementsLineTrain3.append(train3Movmement1)
+
+        trainMovements.append(trainMovementsLineTrain3)
+
+        return trainMovements
     }
 }
