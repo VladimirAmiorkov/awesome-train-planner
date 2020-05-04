@@ -10,7 +10,6 @@ import Foundation
 
 protocol RouteProtocol {
     var directions: [TrainRoute] { get set }
-    var isDirect: Bool { get set }
     var origin: String { get set }
     var destination: String { get set }
 }
@@ -18,7 +17,6 @@ protocol RouteProtocol {
 struct Route: RouteProtocol {
 
     var directions: [TrainRoute]
-    var isDirect: Bool
     var origin: String
     var destination: String
 }

@@ -24,12 +24,12 @@ protocol DataService {
     func findTrainRoutesFrom(_ from: String, _ completion: @escaping (RailwaysResponse<[[TrainRoute]]>) -> Void)
 
     // TODO: Consider removing the `forDirectRoute directRoute: Bool` param as it is should not be needed. Only here for testing poath finding.
-    func findDirectionsFrom(_ origin: String, andDestination: String, forDirectRoute directRoute: Bool, _ completion: @escaping (RailwaysResponse<Route>) -> Void)
+    func findDirectionsFrom(_ origin: String, andDestination: String, _ completion: @escaping (RailwaysResponse<Route>) -> Void)
 
     func getAllTrainsMovementsFrom(_ from: String, _ completion: @escaping (RailwaysResponse<[[TrainMovement]]>) -> Void)
 
     // MARK: Mocks, remove this ASAP, only here for testing uding times when there are no enough trains in live data
-    func mockFindDirectionsFrom(_ origin: String, andDestination: String, forDirectRoute directRoute: Bool, _ completion: @escaping (RailwaysResponse<Route>) -> Void)
+    func mockFindDirectionsFrom(_ origin: String, andDestination: String, _ completion: @escaping (RailwaysResponse<Route>) -> Void)
 }
 
 class RailwayDataService: NSObject, DataService, XMLParserDelegate {
@@ -212,7 +212,7 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
             }
         }
 
-        return Route(directions: foundRoute, isDirect: false, origin: originCode, destination: destinationCode)
+        return Route(directions: foundRoute, origin: originCode, destination: destinationCode)
     }
 
     private func getRouteFromGraph(_ graph: GKGraph, fromOriginNode originNode: StationGraphNode, toDestinationNode destinationNode: StationGraphNode, inNodes nodes: [StationGraphNode], andRoutes routes: [TrainRoute]) -> [TrainRoute]{
@@ -224,85 +224,56 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
         return foundRoute
     }
 
-    private func findRouteFor(origin: String, andDestination destiantion: String, withTrainRoutes trainRoutes: [[TrainRoute]], andDirectRoute directRoute: Bool) -> Route {
-        var tripRoute = Route(directions: [], isDirect: false, origin: origin, destination: destiantion)
-
-        // Lookup in direct routes
-        var currentTrainRoutes = [TrainRoute]()
-        var foundTrainRoute = false
-        var isDirectRoute = false
-        for innerTrainRoute in trainRoutes {
-            for directDirection in innerTrainRoute {
-                if directDirection.originCode == origin || currentTrainRoutes.count != 0 {
-                    currentTrainRoutes.append(directDirection)
-                }
-
-                if isRoute(directDirection, forDestination: destiantion) && currentTrainRoutes.count != 0 {
-                    foundTrainRoute = true
-                    isDirectRoute = true
-                    break
-                }
-            }
-
-            if foundTrainRoute {
-                break
-            } else {
-                currentTrainRoutes = [TrainRoute]()
-            }
-        }
-
-        if foundTrainRoute && directRoute {
-            tripRoute.directions = currentTrainRoutes
-            tripRoute.isDirect = isDirectRoute
-
-            return tripRoute
-        } else {
-            let flattenRoutes = trainRoutes.flatMap { $0 }
-            tripRoute = findRouteWithGraphFor(routes: flattenRoutes, andOrigin: origin, andDestination: destiantion)
-        }
+    private func findRouteFor(origin: String, andDestination destiantion: String, withTrainRoutes trainRoutes: [[TrainRoute]]) -> Route {
+        var tripRoute = Route(directions: [], origin: origin, destination: destiantion)
+        let flattenRoutes = trainRoutes.flatMap { $0 }
+        tripRoute = findRouteWithGraphFor(routes: flattenRoutes, andOrigin: origin, andDestination: destiantion)
 
         return tripRoute
     }
 
-    func findDirectionsFrom(_ origin: String, andDestination: String, forDirectRoute directRoute: Bool, _ completion: @escaping (RailwaysResponse<Route>) -> Void) {
+    func findDirectionsFrom(_ origin: String, andDestination destination: String, _ completion: @escaping (RailwaysResponse<Route>) -> Void) {
+        getAllStationsData(){ stationResponse in
+            self.processAllStationData(stationResponse, origin: origin, andDestination: destination, completion)
+        }
+    }
+
+    private func processAllStationData(_ stationResponse: RailwaysResponse<[Station]>, origin: String, andDestination: String, _ completion: @escaping (RailwaysResponse<Route>) -> Void) {
         let originCaseInsensitive = origin.lowercased()
         let destinationCaseInsensitive = andDestination.lowercased()
+        let tempTrainRoute: Route = Route(directions: [], origin: origin, destination: andDestination)
+        let response = RailwaysResponse<Route>(data: tempTrainRoute)
 
-        getAllStationsData(){ stationResponse in
-            let tempTrainRoute: Route = Route(directions: [], isDirect: false, origin: origin, destination: andDestination)
-            let response = RailwaysResponse<Route>(data: tempTrainRoute)
+        if let data = stationResponse.data {
+            let originStationData = data.first { $0.stationDescCaseInsensitive == originCaseInsensitive }
+            let destinationStationData = data.first { $0.stationDescCaseInsensitive == destinationCaseInsensitive }
 
-            if let data = stationResponse.data {
-                let originStationData = data.first { $0.stationDescCaseInsensitive == originCaseInsensitive }
-                let destinationStationData = data.first { $0.stationDescCaseInsensitive == destinationCaseInsensitive }
+            guard var originStationCode = originStationData?.StationCode, var destinationStationCode = destinationStationData?.StationCode else {
+                let error = RaiwayResponseError(title: "Error getting station data", description: "Station data for \(origin) cannot be found.", code: 1)
+                response.error = error
+                completion(response)
 
-                guard var originStationCode = originStationData?.StationCode, var destinationStationCode = destinationStationData?.StationCode else {
-                    let error = RaiwayResponseError(title: "Error getting station data", description: "Station data for \(origin) cannot be found.", code: 1)
-                    response.error = error
+                return
+            }
+
+            // Note: For some reason the API sometimes returns codes with empty trailing characters, we trim them to be able to use this with other APis
+            originStationCode = originStationCode.trimmingCharacters(in: .whitespacesAndNewlines)
+            destinationStationCode = destinationStationCode.trimmingCharacters(in: .whitespacesAndNewlines)
+
+            self.findTrainRoutesFrom(originStationCode) { receivedData in
+
+                guard let trainRoutes = receivedData.data else {
+                    response.data = nil
+                    response.error = receivedData.error
                     completion(response)
-
                     return
                 }
 
-                // Note: For some reason the API sometimes returns codes with empty trailing characters, we trim them to be able to use this with other APis
-                originStationCode = originStationCode.trimmingCharacters(in: .whitespacesAndNewlines)
-                destinationStationCode = destinationStationCode.trimmingCharacters(in: .whitespacesAndNewlines)
-
-                self.findTrainRoutesFrom(originStationCode) { receivedData in
-
-                    guard let trainRoutes = receivedData.data else {
-                        response.data = nil
-                        response.error = receivedData.error
-                        completion(response)
-                        return
-                    }
-
-                    let data = self.findRouteFor(origin: originStationCode, andDestination: destinationStationCode, withTrainRoutes: trainRoutes, andDirectRoute: directRoute)
-                    let trainRoute: Route = Route(directions: data.directions, isDirect: data.isDirect, origin: origin, destination: andDestination)
-                    response.data = trainRoute
-                    response.error = nil
-                    completion(response)
-                }
+                let data = self.findRouteFor(origin: originStationCode, andDestination: destinationStationCode, withTrainRoutes: trainRoutes)
+                let trainRoute: Route = Route(directions: data.directions, origin: origin, destination: andDestination)
+                response.data = trainRoute
+                response.error = nil
+                completion(response)
             }
         }
     }
@@ -495,12 +466,12 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
 
     // MARK: Mocks, remove this ASAP, only here for testing uding times when there are no enough trains in live data
 
-    func mockFindDirectionsFrom(_ origin: String, andDestination: String, forDirectRoute directRoute: Bool, _ completion: @escaping (RailwaysResponse<Route>) -> Void) {
+    func mockFindDirectionsFrom(_ origin: String, andDestination destination: String, _ completion: @escaping (RailwaysResponse<Route>) -> Void) {
         let originCaseInsensitive = origin.lowercased()
-        let destinationCaseInsensitive = andDestination.lowercased()
+        let destinationCaseInsensitive = destination.lowercased()
 
         mockFindTrainRoutesFrom(originCaseInsensitive) { receivedData in
-            let tempTrainRoute: Route = Route(directions: [], isDirect: false, origin: origin, destination: andDestination)
+            let tempTrainRoute: Route = Route(directions: [], origin: origin, destination: destination)
             let response = RailwaysResponse<Route>(data: tempTrainRoute)
 
             guard let trainRoutes = receivedData.data else {
@@ -510,8 +481,8 @@ class RailwayDataService: NSObject, DataService, XMLParserDelegate {
                 return
             }
 
-            let data = self.findRouteFor(origin: originCaseInsensitive, andDestination: destinationCaseInsensitive, withTrainRoutes: trainRoutes, andDirectRoute: directRoute)
-            let trainRoute: Route = Route(directions: data.directions, isDirect: data.isDirect, origin: origin, destination: andDestination)
+            let data = self.findRouteFor(origin: originCaseInsensitive, andDestination: destinationCaseInsensitive, withTrainRoutes: trainRoutes)
+            let trainRoute: Route = Route(directions: data.directions, origin: origin, destination: destination)
             response.data = trainRoute
             response.error = nil
             completion(response)

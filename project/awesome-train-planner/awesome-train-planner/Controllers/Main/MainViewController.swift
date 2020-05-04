@@ -29,7 +29,6 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     private var listSubscriber: AnyCancellable?
     private var fromSubscriber: AnyCancellable?
     private var toSubscriber: AnyCancellable?
-    private var directTripSubscriber: AnyCancellable?
 
     private var lastSearchOrigin: String = ""
     private var lastSearchDestination: String = ""
@@ -70,10 +69,6 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     @IBAction func searchTap(_ sender: UIButton) {
         dismissKeyboard()
         searchForDirections()
-    }
-
-    @IBAction func directTripSwitchToggle(_ sender: UISwitch) {
-        viewModel.directRoutesEnabled = sender.isOn
     }
 
     @IBAction func switchOriginAndDestination(_ sender: UIButton) {
@@ -123,33 +118,21 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
 
         // TODO: This can be triggered multiple times, if user presses search multiple times. Add a way to cancel running task
         // Mock stations: A, B, C, Z
-//        dataService.mockFindDirectionsFrom("A", andDestination: "Z", forDirectRoute: viewModel.directRoutesEnabled) { data in
-        dataService.findDirectionsFrom(origin, andDestination: destination, forDirectRoute: viewModel.directRoutesEnabled) { data in
+//        dataService.mockFindDirectionsFrom("A", andDestination: "Z") { data in
+        dataService.findDirectionsFrom(origin, andDestination: destination) { data in
             switch data.status {
             case .failure:
                 self.updateStatusWith(status: .failure, andMessage: data.error?.localizedDescription ?? "Error fetching data ...")
             case .successs:
                 self.updateStatusWith(status: .loaded, andMessage: "Success")
                 if let route = data.data {
-                    if route.isDirect {
-                        if let directRoute = self.getDirectDirection(fromDirections: route.directions) {
-                            self.viewModel.directions = [directRoute]
-                        }
-                    } else {
-                        self.viewModel.directions = route.directions
-                        if self.viewModel.directions.count == 0 {
-                            self.updateStatusLabelWith(color: .orange, andMessage: "No trips from \(origin) to \(destination) found", andIsHidden: false)
-                        }
+                    self.viewModel.directions = route.directions
+                    if self.viewModel.directions.count == 0 {
+                        self.updateStatusLabelWith(color: .orange, andMessage: "No trips from \(origin) to \(destination) found", andIsHidden: false)
                     }
                 }
             }
         }
-    }
-
-    private func getDirectDirection(fromDirections directions: [TrainRoute]) -> TrainRoute? {
-        guard let firstDirection = directions.first, let lastDirection = directions.last else { return nil }
-
-        return TrainRoute(originCode: firstDirection.originCode, destinationCode: lastDirection.destinationCode, originName: lastSearchOrigin, destinationName: lastSearchDestination, trainCode: firstDirection.trainCode, time: firstDirection.time, isDirect: true)
     }
 
     private func setupBidnings() {
@@ -177,8 +160,6 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         listSubscriber = viewModel.$directions.receive(on: DispatchQueue.main).sink { receivedValue in
             self.resultsList.reloadData()
         }
-
-        directTripSubscriber = viewModel.$directRoutesEnabled.receive(on: DispatchQueue.main).assign(to: \.isOn, on: directTripSwitch)
     }
 
     private func updateStatusWith(status: LoadingStatus, andMessage message: String) {

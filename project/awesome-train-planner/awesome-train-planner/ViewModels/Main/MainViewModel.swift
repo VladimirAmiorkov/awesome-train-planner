@@ -13,7 +13,6 @@ protocol MainViewModelProtocol {
     var origin: String? { get set }
     var destination: String? { get set }
     var directions: [TrainRoute] { get set }
-    var directRoutesEnabled: Bool { get set }
 }
 
 class MainViewModel: MainViewModelProtocol {
@@ -21,13 +20,11 @@ class MainViewModel: MainViewModelProtocol {
     @Published var origin: String?
     @Published var destination: String?
     @Published var directions: [TrainRoute]
-    @Published var directRoutesEnabled: Bool
     
     init() {
         self.status = .loading
-        self.origin = "Shankill"
-        self.destination = "Arklow"
+        self.origin = "Cork"
+        self.destination = "Dublin Heuston"
         self.directions = []
-        self.directRoutesEnabled = true
     }
 }
