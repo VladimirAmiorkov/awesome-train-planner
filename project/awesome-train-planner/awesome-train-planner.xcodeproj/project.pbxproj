@@ -18,7 +18,7 @@
 		8851BF7524546EB20091C925 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8851BF7424546EB20091C925 /* MainViewController.swift */; };
 		8851BF7A24546EB30091C925 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8851BF7924546EB30091C925 /* Assets.xcassets */; };
 		8851BF7D24546EB30091C925 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8851BF7B24546EB30091C925 /* LaunchScreen.storyboard */; };
-		8851BF8824546EB30091C925 /* awesome_train_plannerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8851BF8724546EB30091C925 /* awesome_train_plannerTests.swift */; };
+		8851BF8824546EB30091C925 /* mainViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8851BF8724546EB30091C925 /* mainViewControllerTests.swift */; };
 		8851BF9324546EB30091C925 /* awesome_train_plannerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8851BF9224546EB30091C925 /* awesome_train_plannerUITests.swift */; };
 		885CB92324570A8E0077C67C /* RailwaysDataXMLParserDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 885CB92224570A8E0077C67C /* RailwaysDataXMLParserDelegate.swift */; };
 		885CB925245722C30077C67C /* StationData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 885CB924245722C30077C67C /* StationData.swift */; };
@@ -50,6 +50,9 @@
 		88732D45245D63D700627A1E /* StationGraphNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88732D44245D63D700627A1E /* StationGraphNode.swift */; };
 		88732D48245EDCEA00627A1E /* Date+String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88732D47245EDCE900627A1E /* Date+String.swift */; };
 		88732D4D24600E3700627A1E /* MainRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88732D4C24600E3700627A1E /* MainRouter.swift */; };
+		88732D5424604C4700627A1E /* MockMainRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88732D5324604C4700627A1E /* MockMainRouter.swift */; };
+		88732D5624604C8400627A1E /* MockDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88732D5524604C8400627A1E /* MockDataService.swift */; };
+		88732D5824604CB400627A1E /* MockMainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88732D5724604CB400627A1E /* MockMainViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -84,7 +87,7 @@
 		8851BF7C24546EB30091C925 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8851BF7E24546EB30091C925 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8851BF8324546EB30091C925 /* awesome-train-plannerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "awesome-train-plannerTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		8851BF8724546EB30091C925 /* awesome_train_plannerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = awesome_train_plannerTests.swift; sourceTree = "<group>"; };
+		8851BF8724546EB30091C925 /* mainViewControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mainViewControllerTests.swift; sourceTree = "<group>"; };
 		8851BF8924546EB30091C925 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8851BF8E24546EB30091C925 /* awesome-train-plannerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "awesome-train-plannerUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8851BF9224546EB30091C925 /* awesome_train_plannerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = awesome_train_plannerUITests.swift; sourceTree = "<group>"; };
@@ -119,6 +122,9 @@
 		88732D44245D63D700627A1E /* StationGraphNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationGraphNode.swift; sourceTree = "<group>"; };
 		88732D47245EDCE900627A1E /* Date+String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+String.swift"; sourceTree = "<group>"; };
 		88732D4C24600E3700627A1E /* MainRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainRouter.swift; sourceTree = "<group>"; };
+		88732D5324604C4700627A1E /* MockMainRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockMainRouter.swift; sourceTree = "<group>"; };
+		88732D5524604C8400627A1E /* MockDataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockDataService.swift; sourceTree = "<group>"; };
+		88732D5724604CB400627A1E /* MockMainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockMainViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -223,7 +229,8 @@
 		8851BF8624546EB30091C925 /* awesome-train-plannerTests */ = {
 			isa = PBXGroup;
 			children = (
-				8851BF8724546EB30091C925 /* awesome_train_plannerTests.swift */,
+				88732D5124604C2B00627A1E /* Tests */,
+				88732D4F24604C1C00627A1E /* Mocks */,
 				8851BF8924546EB30091C925 /* Info.plist */,
 			);
 			path = "awesome-train-plannerTests";
@@ -481,6 +488,40 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
+		88732D4F24604C1C00627A1E /* Mocks */ = {
+			isa = PBXGroup;
+			children = (
+				88732D5024604C2400627A1E /* Main */,
+			);
+			path = Mocks;
+			sourceTree = "<group>";
+		};
+		88732D5024604C2400627A1E /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				88732D5324604C4700627A1E /* MockMainRouter.swift */,
+				88732D5524604C8400627A1E /* MockDataService.swift */,
+				88732D5724604CB400627A1E /* MockMainViewModel.swift */,
+			);
+			path = Main;
+			sourceTree = "<group>";
+		};
+		88732D5124604C2B00627A1E /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				88732D5224604C3000627A1E /* Main */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		88732D5224604C3000627A1E /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				8851BF8724546EB30091C925 /* mainViewControllerTests.swift */,
+			);
+			path = Main;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -657,7 +698,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8851BF8824546EB30091C925 /* awesome_train_plannerTests.swift in Sources */,
+				8851BF8824546EB30091C925 /* mainViewControllerTests.swift in Sources */,
+				88732D5824604CB400627A1E /* MockMainViewModel.swift in Sources */,
+				88732D5424604C4700627A1E /* MockMainRouter.swift in Sources */,
+				88732D5624604C8400627A1E /* MockDataService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

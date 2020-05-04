@@ -13,8 +13,6 @@ protocol MainRouterProtocol {
     var viewControler: UINavigationController { get }
     
     func showAlertWith(stations: [Station], _ completion: @escaping (String) -> Void)
-
-    init(viewControler: UINavigationController)
 }
 
 class MainRouter: MainRouterProtocol {

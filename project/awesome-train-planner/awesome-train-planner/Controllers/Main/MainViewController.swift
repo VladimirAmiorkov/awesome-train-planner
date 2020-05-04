@@ -13,6 +13,8 @@ protocol MainViewControllerProtocol {
     var viewModel: MainViewModel { get }
     var dataService: DataService { get }
     var router: MainRouterProtocol { get }
+
+    func pickOriginTap(_ sender: UIButton)
     
     init(viewModel: MainViewModel, andDataService dataService: DataService, andRouter router: MainRouterProtocol)
 }
