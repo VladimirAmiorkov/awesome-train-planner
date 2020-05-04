@@ -12,7 +12,7 @@ import UIKit
 protocol MainRouterProtocol {
     var viewControler: UINavigationController { get }
     
-    func showAlertWith(stations: [Station])
+    func showAlertWith(stations: [Station], _ completion: @escaping (String) -> Void)
 
     init(viewControler: UINavigationController)
 }
@@ -25,7 +25,20 @@ class MainRouter: MainRouterProtocol {
         self.viewControler = viewControler
     }
 
-    func showAlertWith(stations: [Station]) {
-        
+    func showAlertWith(stations: [Station], _ completion: @escaping (String) -> Void) {
+        let alertController = UIAlertController(title: "Select station", message: nil, preferredStyle: .actionSheet)
+
+        let action = UIAlertAction(title: "Cancel", style: .cancel)
+        alertController.addAction(action)
+
+        for station in stations {
+            let action = UIAlertAction(title: "\(station.StationDesc) code: \(station.StationCode)", style: .default) { (action:UIAlertAction) in
+                completion(station.StationDesc)
+            }
+
+            alertController.addAction(action)
+        }
+
+        viewControler.present(alertController, animated: true, completion: nil)
     }
 }

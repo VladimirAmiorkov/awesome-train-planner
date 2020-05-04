@@ -61,10 +61,10 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        searchForDirections()
-
         setupView()
         setupBidnings()
+        searchForDirections()
+        getStationsData()
     }
 
     // MARK: IBActions
@@ -78,6 +78,22 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         let originValue = viewModel.origin
         viewModel.origin = viewModel.destination
         viewModel.destination = originValue
+    }
+
+    @IBAction func pickOriginTap(_ sender: UIButton) {
+        guard let data = viewModel.stations else { return }
+
+        router.showAlertWith(stations: data) { stationName in
+            self.viewModel.origin = stationName
+        }
+    }
+
+    @IBAction func pickDestionationTap(_ sender: UIButton) {
+        guard let data = viewModel.stations else { return }
+
+        router.showAlertWith(stations: data) { stationName in
+            self.viewModel.destination = stationName
+        }
     }
 
     @objc func dismissKeyboard() {
@@ -108,6 +124,15 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
 
     // MARK: Private functions
+
+    private func getStationsData() {
+        dataService.getAllStationsData() { receivedData in
+            self.viewModel.stations = receivedData.data
+            if let stations = self.viewModel.stations {
+                self.viewModel.stations = stations.sorted { $0.stationDescCaseInsensitive < $1.StationDesc.lowercased() }
+            }
+        }
+    }
 
     private func searchForDirections() {
         guard let origin = viewModel.origin, let destination = viewModel.destination else {
